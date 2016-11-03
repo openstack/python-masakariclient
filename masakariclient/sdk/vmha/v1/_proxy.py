@@ -14,9 +14,49 @@
 
 from openstack import proxy
 
+from masakariclient.sdk.vmha.v1 import notification as _notification
+
 
 class Proxy(proxy.BaseProxy):
     """Proxy class for vmha resource handling.
 
     Create method for each action of each API.
     """
+
+    def notifications(self, **query):
+        """Retrieve notifications.
+
+        :param kwargs \*\*query: Optional query parameters to be sent to
+                                 limit the notifications being returned.
+        :returns: A generator of notifications
+        """
+        return self._list(_notification.Notification, paginated=False, **query)
+
+    def get_notification(self, notification):
+        """Get a single notification.
+
+        :param notification: The value can be the ID of a notification or a
+                           :class:
+                            `~masakariclient.sdk.vmha.v1
+                            .notification.Notification` instance.
+        :returns: One :class:`~masakariclient.sdk.vmha.v1
+                             .notification.Notification`
+        :raises: :class:`~openstack.exceptions.ResourceNotFound`
+                 when no resource can be found.
+        """
+        return self._get(_notification.Notification, notification)
+
+    def create_notification(self, **attrs):
+        """Create a new notification.
+
+        :param dict attrs: Keyword arguments which will be used to create
+                           a :class:
+                               `masakariclient.sdk.vmha.v1
+                               .notification.Notification`,
+                           comprised of the propoerties on the Notification
+                           class.
+        :returns: The result of notification creation
+        :rtype: :class: `masakariclient.sdk.vmha.v1
+                        .notification.Notification`
+        """
+        return self._create(_notification.Notification, **attrs)
