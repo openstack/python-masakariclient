@@ -20,7 +20,7 @@ from osc_lib import utils
 from oslo_serialization import jsonutils
 
 from masakariclient.common.i18n import _
-import masakariclient.common.utils as masakari_utils
+import masakariclient.common.utils as masakariclient_utils
 
 
 class ListNotification(command.Lister):
@@ -69,7 +69,7 @@ class ListNotification(command.Lister):
             'sort': parsed_args.sort,
         }
         if parsed_args.filters:
-            queries.update(masakari_utils.format_parameters(
+            queries.update(masakariclient_utils.format_parameters(
                 parsed_args.filters))
 
         notifications = masakari_client.notifications(**queries)

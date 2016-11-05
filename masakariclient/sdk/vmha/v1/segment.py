@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from openstack import resource
+from openstack import resource2
 
 from masakariclient.sdk.vmha import vmha_service
 
 
-class Segment(resource.Resource):
+class Segment(resource2.Resource):
     resource_key = "segment"
     resources_key = "segments"
     base_path = "/segments"
@@ -30,7 +30,7 @@ class Segment(resource.Resource):
     # 4] POST /v1/segments
     # 5] POST /v1/segments
     allow_list = True
-    allow_retrieve = True
+    allow_get = True
     allow_create = True
     allow_update = True
     allow_delete = True
@@ -41,39 +41,28 @@ class Segment(resource.Resource):
     # for properties of each API
 
     #: A ID of representing this segment.
-    id = resource.prop("id")
+    id = resource2.Body("id")
+    #: A Uuid of representing this segment.
+    uuid = resource2.Body("uuid")
+    #: A created time of representing this segment.
+    created_at = resource2.Body("created_at")
+    #: A latest updated time of representing this segment.
+    updated_at = resource2.Body("updated_at")
     #: The name of this segment.
-    name = resource.prop("name")
+    name = resource2.Body("name")
     #: The description of this segment.
-    description = resource.prop("description")
+    description = resource2.Body("description")
     #: The recovery method of this segment.
-    recovery_method = resource.prop("recovery_method")
+    recovery_method = resource2.Body("recovery_method")
     #: The service type of this segment.
-    service_type = resource.prop("service_type")
+    service_type = resource2.Body("service_type")
 
-    def update(self, session):
-        """Update the segment.
+    def update(self, session, prepend_key=False, has_body=False):
+        """Update a segment."""
+        request = self._prepare_request(prepend_key=prepend_key)
+        del request.body['id']
+        request_body = {"segment": request.body}
+        session.put(request.uri, endpoint_filter=self.service,
+                    json=request_body, headers=request.headers)
 
-        :param session: The session to use for making this request.
-        :type session: :class:`~openstack.session.Session`
-
-        :return: This :class:`Resource` instance.
-        :raises: :exc:`~openstack.exceptions.MethodNotSupported` if
-                 :data:`Resource.allow_update` is not set to ``True``.
-        """
-        if not self.is_dirty:
-            return
-
-        dirty_attrs = dict((k, self._attrs[k]) for k in self._dirty)
-        resp = self.update_by_id(session, self.id, dirty_attrs, path_args=self)
-        try:
-            resp_id = resp.pop("uuid")
-        except KeyError:
-            pass
-        else:
-            if resp_id != self.id:
-                raise ValueError("IDs, %s and %s are not match" % (resp_id,
-                                                                   self.id))
-        self._update_attrs_from_response(resp, include_headers=True)
-        self._reset_dirty()
         return self

@@ -12,20 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from openstack import proxy
+from openstack import proxy2
 
 from masakariclient.sdk.vmha.v1 import notification as _notification
 from masakariclient.sdk.vmha.v1 import segment as _segment
 
 
-class Proxy(proxy.BaseProxy):
+class Proxy(proxy2.BaseProxy):
     """Proxy class for vmha resource handling.
 
     Create method for each action of each API.
     """
 
     def notifications(self, **query):
-        """Retrieve notifications.
+        """Return a generator of notifications.
 
         :param kwargs \*\*query: Optional query parameters to be sent to
                                  limit the notifications being returned.
@@ -63,7 +63,7 @@ class Proxy(proxy.BaseProxy):
         return self._create(_notification.Notification, **attrs)
 
     def segments(self, **query):
-        """Retrieve segments.
+        """Return a generator of segments.
 
         :param kwargs \*\*query: Optional query parameters to be sent to
                                  limit the segments being returned.

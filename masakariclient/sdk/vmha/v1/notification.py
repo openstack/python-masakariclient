@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from openstack import resource
+from openstack import resource2
 
 from masakariclient.sdk.vmha import vmha_service
 
 
-class Notification(resource.Resource):
+class Notification(resource2.Resource):
     resource_key = "notification"
     resources_key = "notifications"
     base_path = "/notifications"
@@ -28,7 +28,7 @@ class Notification(resource.Resource):
     # 2] GET /v1/notifications/<notification_uuid>
     # 3] POST /v1/notifications
     allow_list = True
-    allow_retrieve = True
+    allow_get = True
     allow_create = True
     allow_update = False
     allow_delete = False
@@ -39,13 +39,21 @@ class Notification(resource.Resource):
     # for properties of notifications API
 
     #: A ID of representing this notification.
-    id = resource.prop("id")
+    id = resource2.Body("id")
+    #: A Uuid of representing this notification.
+    notification_uuid = resource2.Body("notification_uuid")
+    #: A created time of representing this notification.
+    created_at = resource2.Body("created_at")
+    #: A latest updated time of representing this notification.
+    updated_at = resource2.Body("updated_at")
     #: The type of failure. Valuse values include ''COMPUTE_HOST'',
     #: ''VM'', ''PROCESS''
-    type = resource.prop("type")
+    type = resource2.Body("type")
     #: The hostname of this notification.
-    hostname = resource.prop("hostname")
+    hostname = resource2.Body("hostname")
     #: The generated_time for this notitication.
-    generated_time = resource.prop("generated_time")
+    generated_time = resource2.Body("generated_time")
     #: The payload of this notification.
-    payload = resource.prop("payload")
+    payload = resource2.Body("payload")
+    #: The source host uuid of this notification.
+    source_host_uuid = resource2.Body("source_host_uuid")
