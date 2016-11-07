@@ -16,4 +16,4 @@ import pbr.version
 
 
 __version__ = pbr.version.VersionInfo(
-    'masakariclient').version_string()
+    'python-masakariclient').version_string()
