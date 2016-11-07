@@ -13,7 +13,9 @@
 # limitations under the License.
 
 from openstack import proxy2
+from openstack import resource2
 
+from masakariclient.sdk.vmha.v1 import host as _host
 from masakariclient.sdk.vmha.v1 import notification as _notification
 from masakariclient.sdk.vmha.v1 import segment as _segment
 
@@ -125,3 +127,74 @@ class Proxy(proxy2.BaseProxy):
         """
         return self._delete(_segment.Segment, segment,
                             ignore_missing=ignore_missing)
+
+    def hosts(self, segment_id, **query):
+        """Return a generator of hosts.
+
+        :param segment_id: The ID of a failover segment.
+        :param kwargs \*\*query: Optional query parameters to be sent to
+                                 limit the hosts being returned.
+
+        :returns: A generator of hosts
+        """
+        return self._list(_host.Host, segment_id=segment_id, paginated=False,
+                          **query)
+
+    def create_host(self, segment_id, **attrs):
+        """Create a new host.
+
+        :param segment_id: The ID of a failover segment.
+        :param dict attrs: Keyword arguments which will be used to create
+                           a :class: `masakariclient.sdk.vmha.v1.host.Host`,
+                           comprised of the propoerties on the Host class.
+
+        :returns: The results of host creation
+        """
+        return self._create(_host.Host, segment_id=segment_id, **attrs)
+
+    def get_host(self, segment_id, host):
+        """Get a single host.
+
+        :param segment_id: The ID of a failover segment.
+        :param host: The value can be the ID of a host or a :class:
+                     `~masakariclient.sdk.vmha.v1.host.Host` instance.
+
+        :returns: One :class:`~masakariclient.sdk.vmha.v1.host.Host`
+        :raises: :class:`~openstack.exceptions.ResourceNotFound`
+                 when no resource can be found.
+        """
+        host_id = resource2.Resource._get_id(host)
+        return self._get(_host.Host, host_id, segment_id=segment_id)
+
+    def update_host(self, segment_id, host, **attrs):
+        """Update the host.
+
+        :param segment_id: The ID of a failover segment.
+        :param host: The value can be the ID of a host or a :class:
+                     `~masakariclient.sdk.vmha.v1.host.Host` instance.
+        :param dict attrs: The attributes to update on the host represented.
+
+        :returns: The updated host
+        """
+        host_id = resource2.Resource._get_id(host)
+        return self._update(_host.Host, host_id, segment_id=segment_id,
+                            **attrs)
+
+    def delete_host(self, segment_id, host, ignore_missing=True):
+        """Delete the host.
+
+        :param segment_id: The ID of a failover segment.
+        :param host: The value can be the ID of a host or a :class:
+                     `~masakariclient.sdk.vmha.v1.host.Host` instance.
+        :param bool ignore_missing: When set to ``False``
+                    :class:`~openstack.exceptions.ResourceNotFound` will be
+                    raised when the host does not exist.
+                    When set to ``True``, no exception will be set when
+                    attempting to delete a nonexistent host.
+
+        :returns: ``None``
+
+        """
+        host_id = resource2.Resource._get_id(host)
+        self._delete(_host.Host, segment_id=segment_id, id=host_id,
+                     ignore_missing=ignore_missing)
