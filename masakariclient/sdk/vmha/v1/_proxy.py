@@ -15,6 +15,7 @@
 from openstack import proxy
 
 from masakariclient.sdk.vmha.v1 import notification as _notification
+from masakariclient.sdk.vmha.v1 import segment as _segment
 
 
 class Proxy(proxy.BaseProxy):
@@ -60,3 +61,67 @@ class Proxy(proxy.BaseProxy):
                         .notification.Notification`
         """
         return self._create(_notification.Notification, **attrs)
+
+    def segments(self, **query):
+        """Retrieve segments.
+
+        :param kwargs \*\*query: Optional query parameters to be sent to
+                                 limit the segments being returned.
+        :returns: A generator of segments
+        """
+        return self._list(_segment.Segment, paginated=False, **query)
+
+    def get_segment(self, segment):
+        """Get a single segment.
+
+        :param segment: The value can be the ID of a segment or a
+                      :class:
+                      `~masakariclient.sdk.vmha.v1.segment.Segment` instance.
+        :returns: One :class:`~masakariclient.sdk.vmha.v1.segment.Segment`
+        :raises: :class:`~openstack.exceptions.ResourceNotFound`
+                 when no resource can be found.
+        """
+        return self._get(_segment.Segment, segment)
+
+    def create_segment(self, **attrs):
+        """Create a new segment.
+
+        :param dict attrs: Keyword arguments which will be used to create
+                           a :class:
+                               `masakariclient.sdk.vmha.v1.segment.Segment`,
+                           comprised of the propoerties on the Segment class.
+        :returns: The result of segment creation
+        :rtype: :class: `masakariclient.sdk.vmha.v1.segment.Segment`
+        """
+        return self._create(_segment.Segment, **attrs)
+
+    def update_segment(self, segment, **attrs):
+        """Update a segment.
+
+        :param segment: The value can be the ID of a segment or a
+                      :class:
+                      `~masakariclient.sdk.vmha.v1.segment.Segment` instance.
+        :param dict attrs: Keyword arguments which will be used to update
+                           a :class:
+                               `masakariclient.sdk.vmha.v1.segment.Segment`,
+                           comprised of the propoerties on the Segment class.
+        :returns: The updated segment.
+        :rtype: :class: `masakariclient.sdk.vmha.v1.segment.Segment`
+        """
+        return self._update(_segment.Segment, segment, **attrs)
+
+    def delete_segment(self, segment, ignore_missing=True):
+        """Delete a segment.
+
+        :param segment:
+            The value can be either the ID of a segment or a
+            :class:`~masakariclient.sdk.vmha.v1.segment.Segment` instance.
+        :param bool ignore_missing: When set to ``False``
+                       :class:`~openstack.exceptions.ResourceNotFound` will be
+                       raised when the segment does not exist.
+                       When set to ``True``, no exception will be set when
+                       attempting to delete a nonexistent segment.
+        :returns: ``None``
+        """
+        return self._delete(_segment.Segment, segment,
+                            ignore_missing=ignore_missing)
