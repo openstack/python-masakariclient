@@ -15,12 +15,16 @@
 from openstack import connection
 from openstack import profile
 
+from masakariclient.sdk.vmha import vmha_service
+
 
 def create_connection(prof=None, user_agent=None, **kwargs):
+    """Create connection to masakari_api."""
 
     if not prof:
         prof = profile.Profile()
 
+    prof._add_service(vmha_service.VMHAService(version="v1"))
     interface = kwargs.pop('interface', None)
     region_name = kwargs.pop('region_name', None)
     if interface:
