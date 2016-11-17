@@ -18,23 +18,23 @@ from openstack import connection
 from openstack import profile
 from osc_lib import utils
 
-from masakariclient.sdk.vmha import vmha_service
+from masakariclient.sdk.ha import ha_service
 
 
 LOG = logging.getLogger(__name__)
 
-DEFAULT_VMHA_API_VERSION = '1'
-API_VERSION_OPTION = 'os_vmha_api_version'
-API_NAME = 'vmha'
+DEFAULT_HA_API_VERSION = '1'
+API_VERSION_OPTION = 'os_ha_api_version'
+API_NAME = 'ha'
 API_VERSIONS = {
     '1': 'masakariclient.client.Client',
 }
 
 
 def make_client(instance):
-    """Returns a vmha proxy"""
+    """Returns a ha proxy"""
     prof = profile.Profile()
-    prof._add_service(vmha_service.VMHAService(version="v1"))
+    prof._add_service(ha_service.HAService(version="v1"))
     prof.set_region(API_NAME, instance.region_name)
     prof.set_version(API_NAME, instance._api_version[API_NAME])
     prof.set_interface(API_NAME, instance.interface)
@@ -43,19 +43,19 @@ def make_client(instance):
                                  cert=instance.session.cert,
                                  profile=prof)
     LOG.debug('Connection: %s', conn)
-    LOG.debug('masakari client initialized: %s', conn.vmha)
-    return conn.vmha
+    LOG.debug('masakari client initialized: %s', conn.ha)
+    return conn.ha
 
 
 def build_option_parser(parser):
     """Hook to add global options"""
     parser.add_argument(
-        '--os-vmha-api-version',
-        metavar='<vmha-api-version>',
+        '--os-ha-api-version',
+        metavar='<ha-api-version>',
         default=utils.env(
-            'OS_VMHA_API_VERSION',
-            default=DEFAULT_VMHA_API_VERSION),
-        help='vmha API version, default=' +
-             DEFAULT_VMHA_API_VERSION +
-             ' (Env: OS_VMHA_API_VERSION)')
+            'OS_HA_API_VERSION',
+            default=DEFAULT_HA_API_VERSION),
+        help='ha API version, default=' +
+             DEFAULT_HA_API_VERSION +
+             ' (Env: OS_HA_API_VERSION)')
     return parser

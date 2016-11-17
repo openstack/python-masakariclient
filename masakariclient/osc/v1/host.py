@@ -64,7 +64,7 @@ class ListHost(command.Lister):
         return parser
 
     def take_action(self, parsed_args):
-        masakari_client = self.app.client_manager.vmha
+        masakari_client = self.app.client_manager.ha
         columns = ['uuid', 'name', 'type', 'control_attributes', 'reserved',
                    'on_maintenance', 'failover_segment_id']
         queries = {
@@ -103,7 +103,7 @@ class ShowHost(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        masakari_client = self.app.client_manager.vmha
+        masakari_client = self.app.client_manager.ha
         return _show_host(masakari_client,
                           parsed_args.segment_id,
                           parsed_args.host)
@@ -147,7 +147,7 @@ class CreateHost(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        masakari_client = self.app.client_manager.vmha
+        masakari_client = self.app.client_manager.ha
         attrs = {
             'name': parsed_args.name,
             'type': parsed_args.type,
@@ -208,7 +208,7 @@ class UpdateHost(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        masakari_client = self.app.client_manager.vmha
+        masakari_client = self.app.client_manager.ha
         attrs = {
             'name': parsed_args.name,
             'type': parsed_args.type,
@@ -245,7 +245,7 @@ class DeleteHost(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        masakari_client = self.app.client_manager.vmha
+        masakari_client = self.app.client_manager.ha
         masakari_client.delete_host(parsed_args.segment_id,
                                     parsed_args.host)
         print('Host deleted: %s' % parsed_args.host)

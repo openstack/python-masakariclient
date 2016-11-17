@@ -14,14 +14,14 @@
 
 from openstack import resource2
 
-from masakariclient.sdk.vmha import vmha_service
+from masakariclient.sdk.ha import ha_service
 
 
 class Notification(resource2.Resource):
     resource_key = "notification"
     resources_key = "notifications"
     base_path = "/notifications"
-    service = vmha_service.VMHAService()
+    service = ha_service.HAService()
 
     # capabilities
     # 1] GET /v1/notifications

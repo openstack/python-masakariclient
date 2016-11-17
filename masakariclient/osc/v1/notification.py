@@ -60,7 +60,7 @@ class ListNotification(command.Lister):
         return parser
 
     def take_action(self, parsed_args):
-        masakari_client = self.app.client_manager.vmha
+        masakari_client = self.app.client_manager.ha
         columns = ['notification_uuid', 'generated_time', 'status',
                    'type', 'source_host_uuid', 'payload']
         queries = {
@@ -94,7 +94,7 @@ class ShowNotification(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        masakari_client = self.app.client_manager.vmha
+        masakari_client = self.app.client_manager.ha
         return _show_notification(masakari_client,
                                   notification_uuid=parsed_args.notification)
 
@@ -127,7 +127,7 @@ class CreateNotification(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        masakari_client = self.app.client_manager.vmha
+        masakari_client = self.app.client_manager.ha
         payload = jsonutils.loads(parsed_args.payload)
         attrs = {
             'type': parsed_args.type,

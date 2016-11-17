@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from masakariclient.sdk.vmha import connection
+from masakariclient.sdk.ha import connection
 
 
 class Client(object):
@@ -20,4 +20,4 @@ class Client(object):
     def __init__(self, prof=None, user_agent=None, **kwargs):
         self.con = connection.create_connection(
             prof=prof, user_agent=user_agent, **kwargs)
-        self.service = self.con.vmha
+        self.service = self.con.ha

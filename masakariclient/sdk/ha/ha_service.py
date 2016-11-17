@@ -15,12 +15,12 @@
 from openstack import service_filter
 
 
-class VMHAService(service_filter.ServiceFilter):
-    """The VMHA service."""
+class HAService(service_filter.ServiceFilter):
+    """The HA service."""
 
     valid_versions = [service_filter.ValidVersion('v1')]
 
     def __init__(self, version=None):
-        """Create an vmha service."""
-        super(VMHAService, self).__init__(service_type='vmha',
-                                          version=version)
+        """Create an ha service."""
+        super(HAService, self).__init__(service_type='ha',
+                                        version=version)

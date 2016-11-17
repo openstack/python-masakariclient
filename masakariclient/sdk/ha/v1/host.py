@@ -14,14 +14,14 @@
 
 from openstack import resource2
 
-from masakariclient.sdk.vmha import vmha_service
+from masakariclient.sdk.ha import ha_service
 
 
 class Host(resource2.Resource):
     resource_key = "host"
     resources_key = "hosts"
     base_path = "/segments/%(segment_id)s/hosts"
-    service = vmha_service.VMHAService()
+    service = ha_service.HAService()
 
     # capabilities
     # 1] GET /v1/segments/<segment_uuid>/hosts

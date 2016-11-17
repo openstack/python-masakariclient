@@ -15,13 +15,13 @@
 from openstack import proxy2
 from openstack import resource2
 
-from masakariclient.sdk.vmha.v1 import host as _host
-from masakariclient.sdk.vmha.v1 import notification as _notification
-from masakariclient.sdk.vmha.v1 import segment as _segment
+from masakariclient.sdk.ha.v1 import host as _host
+from masakariclient.sdk.ha.v1 import notification as _notification
+from masakariclient.sdk.ha.v1 import segment as _segment
 
 
 class Proxy(proxy2.BaseProxy):
-    """Proxy class for vmha resource handling.
+    """Proxy class for ha resource handling.
 
     Create method for each action of each API.
     """
@@ -40,9 +40,9 @@ class Proxy(proxy2.BaseProxy):
 
         :param notification: The value can be the ID of a notification or a
                            :class:
-                            `~masakariclient.sdk.vmha.v1
+                            `~masakariclient.sdk.ha.v1
                             .notification.Notification` instance.
-        :returns: One :class:`~masakariclient.sdk.vmha.v1
+        :returns: One :class:`~masakariclient.sdk.ha.v1
                              .notification.Notification`
         :raises: :class:`~openstack.exceptions.ResourceNotFound`
                  when no resource can be found.
@@ -54,12 +54,12 @@ class Proxy(proxy2.BaseProxy):
 
         :param dict attrs: Keyword arguments which will be used to create
                            a :class:
-                               `masakariclient.sdk.vmha.v1
+                               `masakariclient.sdk.ha.v1
                                .notification.Notification`,
                            comprised of the propoerties on the Notification
                            class.
         :returns: The result of notification creation
-        :rtype: :class: `masakariclient.sdk.vmha.v1
+        :rtype: :class: `masakariclient.sdk.ha.v1
                         .notification.Notification`
         """
         return self._create(_notification.Notification, **attrs)
@@ -78,8 +78,8 @@ class Proxy(proxy2.BaseProxy):
 
         :param segment: The value can be the ID of a segment or a
                       :class:
-                      `~masakariclient.sdk.vmha.v1.segment.Segment` instance.
-        :returns: One :class:`~masakariclient.sdk.vmha.v1.segment.Segment`
+                      `~masakariclient.sdk.ha.v1.segment.Segment` instance.
+        :returns: One :class:`~masakariclient.sdk.ha.v1.segment.Segment`
         :raises: :class:`~openstack.exceptions.ResourceNotFound`
                  when no resource can be found.
         """
@@ -90,10 +90,10 @@ class Proxy(proxy2.BaseProxy):
 
         :param dict attrs: Keyword arguments which will be used to create
                            a :class:
-                               `masakariclient.sdk.vmha.v1.segment.Segment`,
+                               `masakariclient.sdk.ha.v1.segment.Segment`,
                            comprised of the propoerties on the Segment class.
         :returns: The result of segment creation
-        :rtype: :class: `masakariclient.sdk.vmha.v1.segment.Segment`
+        :rtype: :class: `masakariclient.sdk.ha.v1.segment.Segment`
         """
         return self._create(_segment.Segment, **attrs)
 
@@ -102,13 +102,13 @@ class Proxy(proxy2.BaseProxy):
 
         :param segment: The value can be the ID of a segment or a
                       :class:
-                      `~masakariclient.sdk.vmha.v1.segment.Segment` instance.
+                      `~masakariclient.sdk.ha.v1.segment.Segment` instance.
         :param dict attrs: Keyword arguments which will be used to update
                            a :class:
-                               `masakariclient.sdk.vmha.v1.segment.Segment`,
+                               `masakariclient.sdk.ha.v1.segment.Segment`,
                            comprised of the propoerties on the Segment class.
         :returns: The updated segment.
-        :rtype: :class: `masakariclient.sdk.vmha.v1.segment.Segment`
+        :rtype: :class: `masakariclient.sdk.ha.v1.segment.Segment`
         """
         return self._update(_segment.Segment, segment, **attrs)
 
@@ -117,7 +117,7 @@ class Proxy(proxy2.BaseProxy):
 
         :param segment:
             The value can be either the ID of a segment or a
-            :class:`~masakariclient.sdk.vmha.v1.segment.Segment` instance.
+            :class:`~masakariclient.sdk.ha.v1.segment.Segment` instance.
         :param bool ignore_missing: When set to ``False``
                        :class:`~openstack.exceptions.ResourceNotFound` will be
                        raised when the segment does not exist.
@@ -145,7 +145,7 @@ class Proxy(proxy2.BaseProxy):
 
         :param segment_id: The ID of a failover segment.
         :param dict attrs: Keyword arguments which will be used to create
-                           a :class: `masakariclient.sdk.vmha.v1.host.Host`,
+                           a :class: `masakariclient.sdk.ha.v1.host.Host`,
                            comprised of the propoerties on the Host class.
 
         :returns: The results of host creation
@@ -157,9 +157,9 @@ class Proxy(proxy2.BaseProxy):
 
         :param segment_id: The ID of a failover segment.
         :param host: The value can be the ID of a host or a :class:
-                     `~masakariclient.sdk.vmha.v1.host.Host` instance.
+                     `~masakariclient.sdk.ha.v1.host.Host` instance.
 
-        :returns: One :class:`~masakariclient.sdk.vmha.v1.host.Host`
+        :returns: One :class:`~masakariclient.sdk.ha.v1.host.Host`
         :raises: :class:`~openstack.exceptions.ResourceNotFound`
                  when no resource can be found.
         """
@@ -171,7 +171,7 @@ class Proxy(proxy2.BaseProxy):
 
         :param segment_id: The ID of a failover segment.
         :param host: The value can be the ID of a host or a :class:
-                     `~masakariclient.sdk.vmha.v1.host.Host` instance.
+                     `~masakariclient.sdk.ha.v1.host.Host` instance.
         :param dict attrs: The attributes to update on the host represented.
 
         :returns: The updated host
@@ -185,7 +185,7 @@ class Proxy(proxy2.BaseProxy):
 
         :param segment_id: The ID of a failover segment.
         :param host: The value can be the ID of a host or a :class:
-                     `~masakariclient.sdk.vmha.v1.host.Host` instance.
+                     `~masakariclient.sdk.ha.v1.host.Host` instance.
         :param bool ignore_missing: When set to ``False``
                     :class:`~openstack.exceptions.ResourceNotFound` will be
                     raised when the host does not exist.

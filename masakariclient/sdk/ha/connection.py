@@ -15,7 +15,7 @@
 from openstack import connection
 from openstack import profile
 
-from masakariclient.sdk.vmha import vmha_service
+from masakariclient.sdk.ha import ha_service
 
 
 def create_connection(prof=None, user_agent=None, **kwargs):
@@ -24,15 +24,15 @@ def create_connection(prof=None, user_agent=None, **kwargs):
     if not prof:
         prof = profile.Profile()
 
-    prof._add_service(vmha_service.VMHAService(version="v1"))
+    prof._add_service(ha_service.HAService(version="v1"))
     interface = kwargs.pop('interface', None)
     region_name = kwargs.pop('region_name', None)
     if interface:
-        prof.set_interface('vmha', interface)
+        prof.set_interface('ha', interface)
     if region_name:
-        prof.set_region('vmha', region_name)
+        prof.set_region('ha', region_name)
 
-    prof.set_api_version('vmha', '1')
+    prof.set_api_version('ha', '1')
 
     try:
         conn = connection.Connection(profile=prof, user_agent=user_agent,

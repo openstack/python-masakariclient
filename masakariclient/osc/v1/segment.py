@@ -58,7 +58,7 @@ class ListSegment(command.Lister):
         return parser
 
     def take_action(self, parsed_args):
-        masakari_client = self.app.client_manager.vmha
+        masakari_client = self.app.client_manager.ha
         columns = ['uuid', 'name', 'description', 'service_type',
                    'recovery_method']
         queries = {
@@ -92,7 +92,7 @@ class ShowSegment(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        masakari_client = self.app.client_manager.vmha
+        masakari_client = self.app.client_manager.ha
         return _show_segment(masakari_client,
                              segment_uuid=parsed_args.segment)
 
@@ -125,7 +125,7 @@ class CreateSegment(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        masakari_client = self.app.client_manager.vmha
+        masakari_client = self.app.client_manager.ha
         attrs = {
             'name': parsed_args.name,
             'description': parsed_args.description,
@@ -173,7 +173,7 @@ class UpdateSegment(command.ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        masakari_client = self.app.client_manager.vmha
+        masakari_client = self.app.client_manager.ha
         attrs = {
             'name': parsed_args.name,
             'description': parsed_args.description,
@@ -203,7 +203,7 @@ class DeleteSegment(command.Command):
         return parser
 
     def take_action(self, parsed_args):
-        masakari_client = self.app.client_manager.vmha
+        masakari_client = self.app.client_manager.ha
 
         for sid in parsed_args.segment:
             try:
