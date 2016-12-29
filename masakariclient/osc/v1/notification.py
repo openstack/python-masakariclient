@@ -45,8 +45,7 @@ class ListNotification(command.Lister):
             help=_("Sorting option which is a string containing a list of "
                    "keys separated by commas. Each key can be optionally "
                    "appended by a sort direction (:asc or :desc). The valid "
-                   "sort keys are: ['type', 'name', 'created_at', "
-                   "'updated_at']")
+                   "sort keys are: ['type', 'created_at', 'updated_at']")
         )
         parser.add_argument(
             '--filters',
@@ -89,7 +88,7 @@ class ShowNotification(command.ShowOne):
         parser.add_argument(
             'notification',
             metavar='<notification>',
-            help='Notification to display (name or ID)',
+            help='UUID of notification to display',
         )
         return parser
 
