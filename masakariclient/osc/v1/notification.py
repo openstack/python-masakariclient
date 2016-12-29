@@ -154,6 +154,7 @@ def _show_notification(masakari_client, notification_uuid):
         'updated_at',
         'notification_uuid',
         'type',
+        'status',
         'source_host_uuid',
         'generated_time',
         'payload',
