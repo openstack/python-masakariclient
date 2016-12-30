@@ -29,12 +29,12 @@ class ListSegment(command.Lister):
         parser.add_argument(
             '--limit',
             metavar='<limit>',
-            help=_('Limit the number of policies returned')
+            help=_('Limit the number of segments returned')
         )
         parser.add_argument(
             '--marker',
             metavar='<id>',
-            help=_('Only return policies that appear after the given policy '
+            help=_('Only return segments that appear after the given segment '
                    'ID')
         )
         parser.add_argument(
@@ -49,10 +49,10 @@ class ListSegment(command.Lister):
         parser.add_argument(
             '--filters',
             metavar='<"key1=value1;key2=value2...">',
-            help=_("Filter parameters to apply on returned policies. "
+            help=_("Filter parameters to apply on returned segments. "
                    "This can be specified multiple times, or once with "
                    "parameters separated by a semicolon. The valid filter "
-                   "keys are: ['type', 'name']"),
+                   "keys are: ['recovery_method', 'service_type']"),
             action='append'
         )
         return parser

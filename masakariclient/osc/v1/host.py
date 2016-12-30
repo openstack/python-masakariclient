@@ -35,13 +35,12 @@ class ListHost(command.Lister):
         parser.add_argument(
             '--limit',
             metavar='<limit>',
-            help=_('Limit the number of policies returned')
+            help=_('Limit the number of hosts returned')
         )
         parser.add_argument(
             '--marker',
             metavar='<id>',
-            help=_('Only return policies that appear after the given policy '
-                   'ID')
+            help=_('Only return hosts that appear after the given host ID')
         )
         parser.add_argument(
             '--sort',
@@ -55,10 +54,11 @@ class ListHost(command.Lister):
         parser.add_argument(
             '--filters',
             metavar='<"key1=value1;key2=value2...">',
-            help=_("Filter parameters to apply on returned policies. "
+            help=_("Filter parameters to apply on returned hosts. "
                    "This can be specified multiple times, or once with "
                    "parameters separated by a semicolon. The valid filter "
-                   "keys are: ['type', 'name']"),
+                   "keys are: ['failover_segment_id', 'type', "
+                   "'on_maintenance', 'reserved']"),
             action='append'
         )
         return parser
