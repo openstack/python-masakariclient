@@ -61,15 +61,8 @@ class ListSegment(command.Lister):
         masakari_client = self.app.client_manager.ha
         columns = ['uuid', 'name', 'description', 'service_type',
                    'recovery_method']
-        queries = {
-            'limit': parsed_args.limit,
-            'marker': parsed_args.marker,
-            'sort': parsed_args.sort,
-        }
-        if parsed_args.filters:
-            queries.update(masakariclient_utils.format_parameters(
-                parsed_args.filters))
 
+        queries = masakariclient_utils.format_sort_filter_params(parsed_args)
         segments = masakari_client.segments(**queries)
         formatters = {}
         return (

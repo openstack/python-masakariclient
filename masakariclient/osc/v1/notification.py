@@ -62,15 +62,8 @@ class ListNotification(command.Lister):
         masakari_client = self.app.client_manager.ha
         columns = ['notification_uuid', 'generated_time', 'status',
                    'type', 'source_host_uuid', 'payload']
-        queries = {
-            'limit': parsed_args.limit,
-            'marker': parsed_args.marker,
-            'sort': parsed_args.sort,
-        }
-        if parsed_args.filters:
-            queries.update(masakariclient_utils.format_parameters(
-                parsed_args.filters))
 
+        queries = masakariclient_utils.format_sort_filter_params(parsed_args)
         notifications = masakari_client.notifications(**queries)
         formatters = {}
         return (

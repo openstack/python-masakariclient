@@ -67,15 +67,8 @@ class ListHost(command.Lister):
         masakari_client = self.app.client_manager.ha
         columns = ['uuid', 'name', 'type', 'control_attributes', 'reserved',
                    'on_maintenance', 'failover_segment_id']
-        queries = {
-            'limit': parsed_args.limit,
-            'marker': parsed_args.marker,
-            'sort': parsed_args.sort,
-        }
-        if parsed_args.filters:
-            queries.update(masakariclient_utils.format_parameters(
-                parsed_args.filters))
 
+        queries = masakariclient_utils.format_sort_filter_params(parsed_args)
         hosts = masakari_client.hosts(parsed_args.segment_id, **queries)
         formatters = {}
         return (

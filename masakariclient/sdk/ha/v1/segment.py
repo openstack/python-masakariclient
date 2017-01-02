@@ -57,6 +57,10 @@ class Segment(resource2.Resource):
     #: The service type of this segment.
     service_type = resource2.Body("service_type")
 
+    _query_mapping = resource2.QueryParameters(
+        "sort_key", "sort_dir", recovery_method="recovery_method",
+        service_type="service_type")
+
     def update(self, session, prepend_key=False, has_body=False):
         """Update a segment."""
         request = self._prepare_request(prepend_key=prepend_key)

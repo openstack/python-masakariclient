@@ -169,3 +169,35 @@ def print_dict(d, dict_property="Property", dict_value="Value", wrap=0):
         result = result.decode()
 
     print(result)
+
+
+def format_sort_filter_params(parsed_args):
+    queries = {}
+    limit = parsed_args.limit
+    marker = parsed_args.marker
+    sort = parsed_args.sort
+    if limit:
+        queries['limit'] = limit
+    if marker:
+        queries['marker'] = marker
+
+    sort_keys = []
+    sort_dirs = []
+    if sort:
+        for sort_param in sort.split(','):
+            sort_key, _sep, sort_dir = sort_param.partition(':')
+            if not sort_dir:
+                sort_dir = 'desc'
+            elif sort_dir not in ('asc', 'desc'):
+                raise exc.CommandError(_(
+                    'Unknown sort direction: %s') % sort_dir)
+            sort_keys.append(sort_key)
+            sort_dirs.append(sort_dir)
+
+        queries['sort_key'] = sort_keys
+        queries['sort_dir'] = sort_dirs
+
+    if parsed_args.filters:
+        queries.update(format_parameters(parsed_args.filters))
+
+    return queries

@@ -63,6 +63,10 @@ class Host(resource2.Resource):
     #: A failover segment ID of this host(in Body)
     failover_segment_id = resource2.Body("failover_segment_id")
 
+    _query_mapping = resource2.QueryParameters(
+        "sort_key", "sort_dir", failover_segment_id="failover_segment_id",
+        type="type", on_maintenance="on_maintenance", reserved="reserved")
+
     def update(self, session, prepend_key=False, has_body=False):
         """Update a host."""
         request = self._prepare_request(prepend_key=prepend_key)

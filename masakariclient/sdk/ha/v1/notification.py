@@ -59,3 +59,7 @@ class Notification(resource2.Resource):
     payload = resource2.Body("payload")
     #: The source host uuid of this notification.
     source_host_uuid = resource2.Body("source_host_uuid")
+
+    _query_mapping = resource2.QueryParameters(
+        "sort_key", "sort_dir", source_host_uuid="source_host_uuid",
+        type="type", status="status", generated_since="generated-since")
