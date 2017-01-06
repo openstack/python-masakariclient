@@ -51,6 +51,8 @@ class Notification(resource2.Resource):
     type = resource2.Body("type")
     #: The hostname of this notification.
     hostname = resource2.Body("hostname")
+    #: The status for this notitication.
+    status = resource2.Body("status")
     #: The generated_time for this notitication.
     generated_time = resource2.Body("generated_time")
     #: The payload of this notification.
