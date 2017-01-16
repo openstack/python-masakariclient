@@ -12,13 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
 
 from openstack import exceptions as sdk_exc
 from osc_lib.command import command
+from osc_lib import exceptions
 from osc_lib import utils
 
 from masakariclient.common.i18n import _
 import masakariclient.common.utils as masakariclient_utils
+
+# Get the logger of this module
+LOG = logging.getLogger(__name__)
 
 
 class ListHost(command.Lister):
@@ -152,8 +157,13 @@ class CreateHost(command.ShowOne):
         # Remove not specified keys
         attrs = masakariclient_utils.remove_unspecified_items(attrs)
 
-        host = masakari_client.create_host(segment_id=parsed_args.segment_id,
-                                           **attrs)
+        try:
+            host = masakari_client.create_host(
+                segment_id=parsed_args.segment_id,
+                **attrs)
+        except Exception as ex:
+            LOG.debug(_("Failed to create segment host: %s"), parsed_args)
+            raise ex
         return _show_host(masakari_client,
                           parsed_args.segment_id,
                           host.uuid)
@@ -222,8 +232,12 @@ class UpdateHost(command.ShowOne):
                 segment_id=parsed_args.segment_id, host=uuid, **attrs)
         except sdk_exc.NotFoundException:
             # Reraise. To unify exceptions with other functions.
+            LOG.debug(_("Segment host is not found: %s"), parsed_args)
             raise sdk_exc.ResourceNotFound(
                 _('No Host found for %s') % uuid)
+        except Exception as ex:
+            LOG.debug(_("Failed to update segment host: %s"), parsed_args)
+            raise ex
 
         return _show_host(masakari_client, parsed_args.segment_id, uuid)
 
@@ -257,7 +271,11 @@ class DeleteHost(command.ShowOne):
 
 
 def _show_host(masakari_client, segment_id, uuid):
-    host = masakari_client.get_host(segment_id, uuid)
+    try:
+        host = masakari_client.get_host(segment_id, uuid)
+    except sdk_exc.ResourceNotFound:
+        raise exceptions.CommandError(_('Segment host is not found: %s'
+                                        ) % uuid)
 
     formatters = {}
     columns = [

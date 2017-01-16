@@ -12,12 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
+
 from openstack import exceptions as sdk_exc
 from osc_lib.command import command
+from osc_lib import exceptions
 from osc_lib import utils
 
 from masakariclient.common.i18n import _
 import masakariclient.common.utils as masakariclient_utils
+
+# Get the logger of this module
+LOG = logging.getLogger(__name__)
 
 
 class ListSegment(command.Lister):
@@ -128,7 +134,11 @@ class CreateSegment(command.ShowOne):
         # Remove not specified keys
         attrs = masakariclient_utils.remove_unspecified_items(attrs)
 
-        segment = masakari_client.create_segment(**attrs)
+        try:
+            segment = masakari_client.create_segment(**attrs)
+        except Exception as ex:
+            LOG.debug(_("Failed to create segment: %s"), parsed_args)
+            raise ex
         return _show_segment(masakari_client,
                              segment.uuid)
 
@@ -184,8 +194,12 @@ class UpdateSegment(command.ShowOne):
             masakari_client.update_segment(segment=uuid, **attrs)
         # Reraise. To unify exceptions with other functions.
         except sdk_exc.NotFoundException:
+            LOG.debug(_("Segment is not found: %s"), parsed_args)
             raise sdk_exc.ResourceNotFound(
                 _('No Segment found for %s') % uuid)
+        except Exception as ex:
+            LOG.debug(_("Failed to update segment: %s"), parsed_args)
+            raise ex
         return _show_segment(masakari_client, uuid)
 
 
@@ -215,8 +229,11 @@ class DeleteSegment(command.Command):
 
 
 def _show_segment(masakari_client, segment_uuid):
-
-    segment = masakari_client.get_segment(segment_uuid)
+    try:
+        segment = masakari_client.get_segment(segment_uuid)
+    except sdk_exc.ResourceNotFound:
+        raise exceptions.CommandError(_('Segment is not found: %s'
+                                        ) % segment_uuid)
 
     formatters = {}
     columns = [
