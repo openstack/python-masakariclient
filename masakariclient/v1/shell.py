@@ -153,3 +153,102 @@ def do_segment_delete(service, args):
         utils.print_dict(segment.to_dict())
     except Exception as e:
         print(e)
+
+
+@utils.arg('--segment-id', metavar='<SEGMENT_ID>', required=True,
+           help='Segment to display (name or ID)')
+def do_host_list(service, args):
+    """List hosts."""
+    try:
+        hosts = service.hosts(args.segment_id)
+        fields = [
+            'control_attributes', 'failover_segment_id', 'name',
+            'on_maintenance', 'type', 'uuid']
+        utils.print_list(hosts, fields)
+    except Exception as e:
+        print(e)
+
+
+@utils.arg('--segment-id', metavar='<SEGMENT_ID>', required=True,
+           help='Segment to display (name or ID)')
+@utils.arg('--id', metavar='<HOST_ID>', required=True,
+           help='Host to display (name or ID)')
+def do_host_show(service, args):
+    """Show a host details."""
+    try:
+        host = service.get_host(args.segment_id, args.id)
+        utils.print_dict(host.to_dict())
+    except Exception as e:
+        print(e)
+
+
+@utils.arg('--segment-id', metavar='<SEGMENT_ID>', required=True,
+           help='Name or ID of segment.')
+@utils.arg('--name', metavar='<HOST_NAME>', required=True,
+           help='Name of host.')
+@utils.arg('--type', metavar='<TYPE>', required=True,
+           help='Type of host.')
+@utils.arg('--control-attributes', metavar='<CONTROL_ATTRIBUTES>',
+           required=True, help='Control attributes of host.')
+@utils.arg('--reserved', metavar='<RESERVED>', required=False,
+           help='')
+@utils.arg('--on-maintenance', metavar='<ON_MAINTENANCE>', required=False,
+           help='')
+def do_host_create(service, args):
+    """Create a host."""
+    try:
+        attrs = {
+            'name': args.name,
+            'type': args.type,
+            'control_attributes': args.control_attributes,
+            'reserved': args.reserved,
+            'on_maintenance': args.on_maintenance,
+        }
+        host = service.create_host(args.segment_id, **attrs)
+        utils.print_dict(host.to_dict())
+    except Exception as e:
+        print(e)
+
+
+@utils.arg('--segment-id', metavar='<SEGMENT_ID>', required=True,
+           help='Name or ID of segment.')
+@utils.arg('--id', metavar='<HOST_ID>', required=True,
+           help='Name or ID of host.')
+@utils.arg('--name', metavar='<HOST_NAME>', required=False,
+           help='Name of host.')
+@utils.arg('--type', metavar='<TYPE>', required=False,
+           help='Type of host.')
+@utils.arg('--control-attributes', metavar='<CONTROL_ATTRIBUTES>',
+           required=False, help='Control attributes of host.')
+@utils.arg('--reserved', metavar='<RESERVED>', required=False, help='')
+@utils.arg('--on-maintenance', metavar='<ON_MAINTENANCE>',
+           required=False, help='')
+def do_host_update(service, args):
+    """Update a host."""
+    try:
+        attrs = {
+            'name': args.name,
+            'type': args.type,
+            'control_attributes': args.control_attributes,
+            'reserved': args.reserved,
+            'on_maintenance': args.on_maintenance,
+        }
+        attrs = utils.remove_unspecified_items(attrs)
+        host = service.update_host(args.segment_id, args.id, **attrs)
+        utils.print_dict(host.to_dict())
+    except Exception as e:
+        print(e)
+
+
+@utils.arg('--segment-id', metavar='<SEGMENT_ID>', required=True,
+           help='Segment ID of the host to delete.')
+@utils.arg('--id', metavar='<HOST_ID>', required=True,
+           help='Name or ID of the host to delete.')
+def do_host_delete(service, args):
+    """Delete a host."""
+    try:
+        host = service.delete_host(args.segment_id, args.id)
+        if host:
+            utils.print_dict(host.to_dict())
+    except Exception as e:
+        print(e)

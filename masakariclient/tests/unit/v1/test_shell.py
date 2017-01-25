@@ -48,6 +48,31 @@ class TestV1Shell(base.TestCase):
             'id': '14',
             'description': 'UPDATE Discription'}
 
+        self.hosts_vals = {
+            'reserved': False,
+            'uuid': '0951e72c-49f5-46aa-8465-2d61ed3b46d9',
+            'deleted': False,
+            'on_maintenance': False,
+            'created_at': '2016-11-29T11:10:51.000000',
+            'control_attributes': 'control-attributesX',
+            'updated_at': '2016-11-29T11:30:18.000000',
+            'name': 'new_host-3',
+            'failover_segment': {
+                'uuid': '6b985a8a-f8c0-42e4-beaa-d2fcd8dabbb6',
+                'deleted': False,
+                'created_at': '2016-11-16T04:46:38.000000',
+                'description': None,
+                'recovery_method': 'auto',
+                'updated_at': None,
+                'service_type': 'testsegment01_auto',
+                'deleted_at': None,
+                'id': 3,
+                'name': 'testsegment01'},
+            'deleted_at': None,
+            'type': 'typeX',
+            'id': 10,
+            'failover_segment_id': '6b985a8a-f8c0-42e4-beaa-d2fcd8dabbb6'}
+
     @mock.patch.object(utils, 'print_list')
     def test_do_notification_list(self, mock_print_list):
         service = mock.Mock()
@@ -82,4 +107,23 @@ class TestV1Shell(base.TestCase):
 
         mock_print_list.assert_called_once_with(
             self.segment_vals,
+            columns)
+
+    @mock.patch.object(utils, 'print_list')
+    def test_do_host_list(self, mock_print_list):
+        service = mock.Mock()
+        service.hosts.return_value = self.hosts_vals
+        args = mock.Mock()
+        columns = [
+            'control_attributes',
+            'failover_segment_id',
+            'name',
+            'on_maintenance',
+            'type',
+            'uuid']
+
+        ms.do_host_list(service, args)
+
+        mock_print_list.assert_called_once_with(
+            self.hosts_vals,
             columns)
