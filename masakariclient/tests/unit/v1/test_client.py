@@ -28,7 +28,7 @@ class FakeConnection(object):
 
     def __init__(self, prof=None, user_agent=None, **kwargs):
         super(FakeConnection, self).__init__()
-        self.vmha = None
+        self.ha = None
 
 
 class TestV1Client(base.TestCase):
@@ -37,7 +37,7 @@ class TestV1Client(base.TestCase):
         super(TestV1Client, self).setUp()
         self.conn = mock.Mock()
         self.service = mock.Mock()
-        self.conn.vmha = self.service
+        self.conn.ha = self.service
 
     def test_client_init(self):
         with mock.patch.object(connection,
