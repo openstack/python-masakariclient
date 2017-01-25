@@ -20,6 +20,7 @@ import textwrap
 from oslo_serialization import jsonutils
 from oslo_utils import encodeutils
 from oslo_utils import importutils
+from oslo_utils import uuidutils
 
 from masakariclient.common import exception as exc
 from masakariclient.common.i18n import _
@@ -201,3 +202,28 @@ def format_sort_filter_params(parsed_args):
         queries.update(format_parameters(parsed_args.filters))
 
     return queries
+
+
+def get_uuid_by_name(manager, name, segment=None):
+    """Helper methods for getting uuid of segment or host by name.
+
+    :param manager: A client manager class
+    :param name: The resource we are trying to find a uuid
+    :param segment: segment id, default None
+    :return: The uuid of found resource
+    """
+
+    # If it cannot be found return the name.
+    uuid = name
+    if not uuidutils.is_uuid_like(name):
+        if segment:
+            items = manager.hosts(segment)
+        else:
+            items = manager.segments()
+
+        for item in items:
+            item_name = getattr(item, 'name')
+            if item_name == name:
+                uuid = getattr(item, 'uuid')
+                break
+    return uuid

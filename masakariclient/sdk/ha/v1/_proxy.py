@@ -196,5 +196,5 @@ class Proxy(proxy2.BaseProxy):
 
         """
         host_id = resource2.Resource._get_id(host)
-        self._delete(_host.Host, segment_id=segment_id, id=host_id,
-                     ignore_missing=ignore_missing)
+        return self._delete(_host.Host, host_id, segment_id=segment_id,
+                            ignore_missing=ignore_missing)
