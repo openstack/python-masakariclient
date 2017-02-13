@@ -31,13 +31,13 @@ class ListNotification(command.Lister):
         parser.add_argument(
             '--limit',
             metavar='<limit>',
-            help=_('Limit the number of policies returned')
+            help=_('Limit the number of notifications returned')
         )
         parser.add_argument(
             '--marker',
             metavar='<id>',
-            help=_('Only return policies that appear after the given policy '
-                   'ID')
+            help=_('Only return notifications that appear after the given '
+                   'notification ID')
         )
         parser.add_argument(
             '--sort',
@@ -50,10 +50,11 @@ class ListNotification(command.Lister):
         parser.add_argument(
             '--filters',
             metavar='<"key1=value1;key2=value2...">',
-            help=_("Filter parameters to apply on returned policies. "
+            help=_("Filter parameters to apply on returned notifications. "
                    "This can be specified multiple times, or once with "
                    "parameters separated by a semicolon. The valid filter "
-                   "keys are: ['type', 'name']"),
+                   "keys are: ['source_host_uuid', 'type', 'status', "
+                   "generated-since]"),
             action='append'
         )
         return parser
