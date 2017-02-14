@@ -67,12 +67,12 @@ class Host(resource2.Resource):
         "sort_key", "sort_dir", failover_segment_id="failover_segment_id",
         type="type", on_maintenance="on_maintenance", reserved="reserved")
 
-    def update(self, session, prepend_key=False, has_body=False):
+    def update(self, session, prepend_key=False, has_body=True):
         """Update a host."""
         request = self._prepare_request(prepend_key=prepend_key)
         del request.body['id']
         request_body = {"host": request.body}
-        session.put(request.uri, endpoint_filter=self.service,
-                    json=request_body, headers=request.headers)
-
+        res = session.put(request.uri, endpoint_filter=self.service,
+                          json=request_body, headers=request.headers)
+        self._translate_response(res, has_body=has_body)
         return self
