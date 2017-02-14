@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 from openstack import exceptions as sdk_exc
 from osc_lib.command import command
 from osc_lib import exceptions

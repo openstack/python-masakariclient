@@ -12,10 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
+
 from openstack import connection
 from openstack import profile
 
 from masakariclient.sdk.ha import ha_service
+
+LOG = logging.getLogger(__name__)
 
 
 def create_connection(prof=None, user_agent=None, **kwargs):
@@ -35,8 +39,11 @@ def create_connection(prof=None, user_agent=None, **kwargs):
     prof.set_api_version('ha', '1')
 
     try:
-        conn = connection.Connection(profile=prof, user_agent=user_agent,
+        conn = connection.Connection(profile=prof,
+                                     user_agent=user_agent,
                                      **kwargs)
+        LOG.debug('Connection: %s', conn)
+        LOG.debug('masakari client initialized: %s', conn.ha)
     except Exception as e:
         raise e
 

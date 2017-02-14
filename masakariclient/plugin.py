@@ -43,7 +43,7 @@ def make_client(instance):
                                  cert=instance.session.cert,
                                  profile=prof)
     LOG.debug('Connection: %s', conn)
-    LOG.debug('masakari client initialized: %s', conn.ha)
+    LOG.debug('masakari client initialized using OpenStack SDK: %s', conn.ha)
     return conn.ha
 
 
