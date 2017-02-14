@@ -70,3 +70,86 @@ def do_notification_create(service, args):
 
     except Exception as e:
         print(e)
+
+
+def do_segment_list(service, args):
+    """List segments."""
+    try:
+        segments = service.segments()
+        fields = [
+            'uuid', 'name', 'description',
+            'service_type', 'recovery_method']
+        utils.print_list(segments, fields)
+    except Exception as e:
+        print(e)
+
+
+@utils.arg('--id', metavar='<SEGMENT_ID>', required=True,
+           help='Segment to display (name or ID)')
+def do_segment_show(service, args):
+    """Show a segment details."""
+    try:
+        segment = service.get_segment(args.id)
+        utils.print_dict(segment.to_dict())
+    except Exception as e:
+        print(e)
+
+
+@utils.arg('--name', metavar='<SEGMENT_NAME>', required=True,
+           help='Name of segment.')
+@utils.arg('--description', metavar='<DESCRIPTION>', required=True,
+           help='Description of segment.')
+@utils.arg('--recovery-method', metavar='<RECOVERY_METHOD>', required=True,
+           help='JSON string about recovery method.')
+@utils.arg('--service-type', metavar='<SERVICE_TYPE>', required=True,
+           help='Service type of segment.')
+def do_segment_create(service, args):
+    """Create segment."""
+    try:
+        attrs = {
+            'name': args.name,
+            'description': args.description,
+            'recovery_method': args.recovery_method,
+            'service_type': args.service_type,
+        }
+        segment = service.create_segment(**attrs)
+        utils.print_dict(segment.to_dict())
+    except Exception as e:
+        print(e)
+
+
+@utils.arg('--id', metavar='<SEGMENT_ID>',
+           required=True, help='Name or ID of segment.')
+@utils.arg('--name', metavar='<SEGMENT_NAME>',
+           required=False, help='Name of segment.')
+@utils.arg('--description', metavar='<DESCRIPTION>',
+           required=False, help='Description of segment.')
+@utils.arg('--recovery-method', metavar='<RECOVERY_METHOD>',
+           required=False, help='JSON string about recovery method.')
+@utils.arg('--service-type', metavar='<SERVICE_TYPE>',
+           required=False, help='Service type of segment.')
+def do_segment_update(service, args):
+    """Update a segment."""
+    try:
+        attrs = {
+            'name': args.name,
+            'description': args.description,
+            'recovery_method': args.recovery_method,
+            'service_type': args.service_type,
+        }
+        attrs = utils.remove_unspecified_items(attrs)
+        segment = service.update_segment(args.id, **attrs)
+        utils.print_dict(segment.to_dict())
+    except Exception as e:
+        print(e)
+
+
+@utils.arg('--id', metavar='<SEGMENT_ID>', required=True,
+           help='Name or ID of the segment to delete.')
+def do_segment_delete(service, args):
+    """Delete a segment."""
+    try:
+        segment = service.delete_segment(args.id, ignore_missing=True)
+        utils.print_dict(segment.to_dict())
+    except Exception as e:
+        print(e)

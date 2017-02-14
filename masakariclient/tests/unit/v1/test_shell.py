@@ -28,7 +28,7 @@ class TestV1Shell(base.TestCase):
 
     def setUp(self):
         super(TestV1Shell, self).setUp()
-        self.vals = {
+        self.notification_vals = {
             'notification_uuid': 'b3bf75d7-c2e9-4023-a10b-e5b464b9b539',
             'source_host_uuid': '68fa7386-983e-4497-b5c4-3780f774d302',
             'created_at': '2016-11-15T12:24:39.000000',
@@ -38,10 +38,20 @@ class TestV1Shell(base.TestCase):
             'type': 'VM',
             'id': '27'}
 
+        self.segment_vals = {
+            'uuid': '870da19d-37ec-41d2-a4b2-7be54b0d6ec9',
+            'created_at': '2016-11-17T10:08:32.000000',
+            'recovery_method': 'auto',
+            'updated_at': '2016-11-17T10:09:56.000000',
+            'name': 'testsegment05',
+            'service_type': 'testsegment01_auto',
+            'id': '14',
+            'description': 'UPDATE Discription'}
+
     @mock.patch.object(utils, 'print_list')
     def test_do_notification_list(self, mock_print_list):
         service = mock.Mock()
-        service.notifications.return_value = self.vals
+        service.notifications.return_value = self.notification_vals
         args = mock.Mock()
         columns = [
             'notification_uuid',
@@ -53,5 +63,23 @@ class TestV1Shell(base.TestCase):
         ms.do_notification_list(service, args)
 
         mock_print_list.assert_called_once_with(
-            self.vals,
+            self.notification_vals,
+            columns)
+
+    @mock.patch.object(utils, 'print_list')
+    def test_do_segment_list(self, mock_print_list):
+        service = mock.Mock()
+        service.segments.return_value = self.segment_vals
+        args = mock.Mock()
+        columns = [
+            'uuid',
+            'name',
+            'description',
+            'service_type',
+            'recovery_method']
+
+        ms.do_segment_list(service, args)
+
+        mock_print_list.assert_called_once_with(
+            self.segment_vals,
             columns)

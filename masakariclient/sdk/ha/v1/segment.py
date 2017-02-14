@@ -61,12 +61,12 @@ class Segment(resource2.Resource):
         "sort_key", "sort_dir", recovery_method="recovery_method",
         service_type="service_type")
 
-    def update(self, session, prepend_key=False, has_body=False):
+    def update(self, session, prepend_key=False, has_body=True):
         """Update a segment."""
         request = self._prepare_request(prepend_key=prepend_key)
         del request.body['id']
         request_body = {"segment": request.body}
-        session.put(request.uri, endpoint_filter=self.service,
-                    json=request_body, headers=request.headers)
-
+        ret = session.put(request.uri, endpoint_filter=self.service,
+                          json=request_body, headers=request.headers)
+        self._translate_response(ret, has_body=has_body)
         return self
