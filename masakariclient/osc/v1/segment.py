@@ -14,7 +14,6 @@
 
 from openstack import exceptions as sdk_exc
 from osc_lib.command import command
-from osc_lib import exceptions
 from osc_lib import utils
 
 from masakariclient.common.i18n import _
@@ -86,8 +85,9 @@ class ShowSegment(command.ShowOne):
 
     def take_action(self, parsed_args):
         masakari_client = self.app.client_manager.ha
-        return _show_segment(masakari_client,
-                             segment_uuid=parsed_args.segment)
+        uuid = masakariclient_utils.get_uuid_by_name(
+            masakari_client, parsed_args.segment)
+        return _show_segment(masakari_client, segment_uuid=uuid)
 
 
 class CreateSegment(command.ShowOne):
@@ -167,6 +167,10 @@ class UpdateSegment(command.ShowOne):
 
     def take_action(self, parsed_args):
         masakari_client = self.app.client_manager.ha
+
+        uuid = masakariclient_utils.get_uuid_by_name(
+            masakari_client, parsed_args.segment)
+
         attrs = {
             'name': parsed_args.name,
             'description': parsed_args.description,
@@ -176,10 +180,13 @@ class UpdateSegment(command.ShowOne):
         # Remove not specified keys
         attrs = masakariclient_utils.remove_unspecified_items(attrs)
 
-        masakari_client.update_segment(segment=parsed_args.segment,
-                                       **attrs)
-        return _show_segment(masakari_client,
-                             parsed_args.segment)
+        try:
+            masakari_client.update_segment(segment=uuid, **attrs)
+        # Reraise. To unify exceptions with other functions.
+        except sdk_exc.NotFoundException:
+            raise sdk_exc.ResourceNotFound(
+                _('No Segment found for %s') % uuid)
+        return _show_segment(masakari_client, uuid)
 
 
 class DeleteSegment(command.Command):
@@ -197,21 +204,19 @@ class DeleteSegment(command.Command):
 
     def take_action(self, parsed_args):
         masakari_client = self.app.client_manager.ha
-
         for sid in parsed_args.segment:
             try:
-                masakari_client.delete_segment(sid, False)
+                uuid = masakariclient_utils.get_uuid_by_name(
+                    masakari_client, sid)
+                masakari_client.delete_segment(uuid, False)
                 print('Segment deleted: %s' % sid)
             except Exception as ex:
                 print(ex)
 
 
 def _show_segment(masakari_client, segment_uuid):
-    try:
-        segment = masakari_client.get_segment(segment_uuid)
-    except sdk_exc.ResourceNotFound:
-        raise exceptions.CommandError(_('Segment not found: %s'
-                                        ) % segment_uuid)
+
+    segment = masakari_client.get_segment(segment_uuid)
 
     formatters = {}
     columns = [

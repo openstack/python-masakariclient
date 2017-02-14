@@ -15,7 +15,6 @@
 
 from openstack import exceptions as sdk_exc
 from osc_lib.command import command
-from osc_lib import exceptions
 from osc_lib import utils
 
 from masakariclient.common.i18n import _
@@ -97,9 +96,11 @@ class ShowHost(command.ShowOne):
 
     def take_action(self, parsed_args):
         masakari_client = self.app.client_manager.ha
-        return _show_host(masakari_client,
-                          parsed_args.segment_id,
-                          parsed_args.host)
+        uuid = masakariclient_utils.get_uuid_by_name(
+            masakari_client,
+            parsed_args.host,
+            segment=parsed_args.segment_id)
+        return _show_host(masakari_client, parsed_args.segment_id, uuid)
 
 
 class CreateHost(command.ShowOne):
@@ -202,6 +203,10 @@ class UpdateHost(command.ShowOne):
 
     def take_action(self, parsed_args):
         masakari_client = self.app.client_manager.ha
+        uuid = masakariclient_utils.get_uuid_by_name(
+            masakari_client,
+            parsed_args.host,
+            segment=parsed_args.segment_id)
         attrs = {
             'name': parsed_args.name,
             'type': parsed_args.type,
@@ -212,12 +217,15 @@ class UpdateHost(command.ShowOne):
         # Remove not specified keys
         attrs = masakariclient_utils.remove_unspecified_items(attrs)
 
-        masakari_client.update_host(segment_id=parsed_args.segment_id,
-                                    host=parsed_args.host,
-                                    **attrs)
-        return _show_host(masakari_client,
-                          parsed_args.segment_id,
-                          parsed_args.host)
+        try:
+            masakari_client.update_host(
+                segment_id=parsed_args.segment_id, host=uuid, **attrs)
+        except sdk_exc.NotFoundException:
+            # Reraise. To unify exceptions with other functions.
+            raise sdk_exc.ResourceNotFound(
+                _('No Host found for %s') % uuid)
+
+        return _show_host(masakari_client, parsed_args.segment_id, uuid)
 
 
 class DeleteHost(command.ShowOne):
@@ -239,17 +247,17 @@ class DeleteHost(command.ShowOne):
 
     def take_action(self, parsed_args):
         masakari_client = self.app.client_manager.ha
-        masakari_client.delete_host(parsed_args.segment_id,
-                                    parsed_args.host)
+        uuid = masakariclient_utils.get_uuid_by_name(
+            masakari_client,
+            parsed_args.host,
+            segment=parsed_args.segment_id)
+        masakari_client.delete_host(parsed_args.segment_id, uuid, False)
         print('Host deleted: %s' % parsed_args.host)
         return ({}, {})
 
 
 def _show_host(masakari_client, segment_id, uuid):
-    try:
-        host = masakari_client.get_host(segment_id, uuid)
-    except sdk_exc.ResourceNotFound:
-        raise exceptions.CommandError(_('Host not found: %s') % uuid)
+    host = masakari_client.get_host(segment_id, uuid)
 
     formatters = {}
     columns = [
