@@ -30,7 +30,9 @@ def add_global_args(parser, version):
         help=_('Version number for Masakari API to use, Default to "1".'))
 
     parser.add_argument(
-        '--debug', default=False, action='store_true',
+        '-d', '--debug',
+        action='store_true',
+        default=False,
         help=_('Print debugging output.'))
 
 

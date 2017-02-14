@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import argparse
+import logging
 import sys
 
 from oslo_utils import encodeutils
@@ -26,6 +27,7 @@ from masakariclient.common.i18n import _
 from masakariclient.common import utils
 
 USER_AGENT = 'python-masakariclient'
+LOG = logging.getLogger(__name__)
 
 
 class MasakariShell(object):
@@ -113,6 +115,16 @@ class MasakariShell(object):
 
         return masakari_client.Client(api_ver, user_agent=USER_AGENT, **kwargs)
 
+    def _setup_logging(self, debug):
+        if debug:
+            log_level = logging.DEBUG
+        else:
+            log_level = logging.WARNING
+        log_format = "%(levelname)s (%(module)s) %(message)s"
+        logging.basicConfig(format=log_format, level=log_level)
+        logging.getLogger('iso8601').setLevel(logging.WARNING)
+        logging.getLogger('urllib3.connectionpool').setLevel(logging.WARNING)
+
     def main(self, argv):
 
         parser = argparse.ArgumentParser(
@@ -128,6 +140,8 @@ class MasakariShell(object):
 
         # parse main arguments
         (options, args) = parser.parse_known_args(argv)
+
+        self._setup_logging(options.debug)
 
         base_parser = parser
         api_ver = options.masakari_api_version
@@ -177,7 +191,7 @@ def main(args=None):
         print(_("KeyboardInterrupt masakari client"), sys.stderr)
         return 130
     except Exception as e:
-        if '--debug' in args:
+        if '--debug' in args or '-d' in args:
             raise
         else:
             print(encodeutils.safe_encode(six.text_type(e)), sys.stderr)
