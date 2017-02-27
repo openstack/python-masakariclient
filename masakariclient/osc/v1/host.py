@@ -136,12 +136,16 @@ class CreateHost(command.ShowOne):
         parser.add_argument(
             '--reserved',
             metavar='<reserved>',
-            help=_('Host reservation. True or False.')
+            choices=['True', 'False'],
+            help=_('Host reservation. The supported options are: '
+                   'True, False.')
         )
         parser.add_argument(
             '--on_maintenance',
             metavar='<on_maintenance>',
-            help=_('Maintenance status of host. True or False.')
+            choices=['True', 'False'],
+            help=_('Maintenance status of host. The supported options are: '
+                   'True, False.')
         )
         return parser
 
@@ -185,6 +189,20 @@ class UpdateHost(command.ShowOne):
             help='Name or ID of the Host',
         )
         parser.add_argument(
+            '--reserved',
+            metavar='<reserved>',
+            choices=['True', 'False'],
+            help=_('Host reservation. The supported options are: '
+                   'True, False.')
+        )
+        parser.add_argument(
+            '--on_maintenance',
+            metavar='<on_maintenance>',
+            choices=['True', 'False'],
+            help=_('Maintenance status of host. The supported options are: '
+                   'True, False.')
+        )
+        parser.add_argument(
             '--name',
             metavar='<name>',
             help=_('Name of host.')
@@ -198,16 +216,6 @@ class UpdateHost(command.ShowOne):
             '--control_attributes',
             metavar='<control_attributes>',
             help=_('Attributes about control.')
-        )
-        parser.add_argument(
-            '--reserved',
-            metavar='<reserved>',
-            help=_('Host reservation. True or False.')
-        )
-        parser.add_argument(
-            '--on_maintenance',
-            metavar='<on_maintenance>',
-            help=_('Maintenance status of host. True or False.')
         )
         return parser
 

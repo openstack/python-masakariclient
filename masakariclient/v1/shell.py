@@ -48,7 +48,9 @@ def do_notification_show(service, args):
 
 
 @utils.arg('--type', metavar='<TYPE>', required=True,
-           help='Type of failure.')
+           choices=['COMPUTE_HOST', 'VM', 'PROCESS'],
+           help='Type of failure. The supported options are: '
+                'COMPUTE_HOST, VM, PROCESS.')
 @utils.arg('--hostname', metavar='<HOSTNAME>', required=True,
            help='Hostname of notification.')
 @utils.arg('--generated-time', metavar='<GENERATED_TIME>', required=True,
@@ -97,12 +99,14 @@ def do_segment_show(service, args):
 
 @utils.arg('--name', metavar='<SEGMENT_NAME>', required=True,
            help='Name of segment.')
-@utils.arg('--description', metavar='<DESCRIPTION>', required=True,
-           help='Description of segment.')
 @utils.arg('--recovery-method', metavar='<RECOVERY_METHOD>', required=True,
-           help='JSON string about recovery method.')
+           choices=['auto', 'reserved_host'],
+           help='Recovery method. '
+                'The supported options are: auto, reserved_host.')
 @utils.arg('--service-type', metavar='<SERVICE_TYPE>', required=True,
            help='Service type of segment.')
+@utils.arg('--description', metavar='<DESCRIPTION>', required=False,
+           help='Description of segment.')
 def do_segment_create(service, args):
     """Create segment."""
     try:
@@ -122,12 +126,15 @@ def do_segment_create(service, args):
            required=True, help='Name or ID of segment.')
 @utils.arg('--name', metavar='<SEGMENT_NAME>',
            required=False, help='Name of segment.')
-@utils.arg('--description', metavar='<DESCRIPTION>',
-           required=False, help='Description of segment.')
 @utils.arg('--recovery-method', metavar='<RECOVERY_METHOD>',
-           required=False, help='JSON string about recovery method.')
+           choices=['auto', 'reserved_host'],
+           required=False,
+           help='Recovery method. '
+                'The supported options are: auto, reserved_host.')
 @utils.arg('--service-type', metavar='<SERVICE_TYPE>',
            required=False, help='Service type of segment.')
+@utils.arg('--description', metavar='<DESCRIPTION>',
+           required=False, help='Description of segment.')
 def do_segment_update(service, args):
     """Update a segment."""
     try:
@@ -182,18 +189,21 @@ def do_host_show(service, args):
         print(e)
 
 
-@utils.arg('--segment-id', metavar='<SEGMENT_ID>', required=True,
-           help='Name or ID of segment.')
 @utils.arg('--name', metavar='<HOST_NAME>', required=True,
            help='Name of host.')
 @utils.arg('--type', metavar='<TYPE>', required=True,
            help='Type of host.')
 @utils.arg('--control-attributes', metavar='<CONTROL_ATTRIBUTES>',
            required=True, help='Control attributes of host.')
+@utils.arg('--segment-id', metavar='<SEGMENT_ID>', required=True,
+           help='Name or ID of segment.')
 @utils.arg('--reserved', metavar='<RESERVED>', required=False,
-           help='')
+           choices=['True', 'False'],
+           help='Host reservation. The supported options are: True, False.')
 @utils.arg('--on-maintenance', metavar='<ON_MAINTENANCE>', required=False,
-           help='')
+           choices=['True', 'False'],
+           help='Maintenance status of host. The supported options are: '
+                'True, False.')
 def do_host_create(service, args):
     """Create a host."""
     try:
@@ -214,15 +224,19 @@ def do_host_create(service, args):
            help='Name or ID of segment.')
 @utils.arg('--id', metavar='<HOST_ID>', required=True,
            help='Name or ID of host.')
+@utils.arg('--reserved', metavar='<RESERVED>', required=False,
+           choices=['True', 'False'],
+           help='Host reservation. The supported options are: True, False.')
+@utils.arg('--on-maintenance', metavar='<ON_MAINTENANCE>',
+           required=False, choices=['True', 'False'],
+           help='Maintenance status of host. The supported options are: '
+                'True, False.')
 @utils.arg('--name', metavar='<HOST_NAME>', required=False,
            help='Name of host.')
 @utils.arg('--type', metavar='<TYPE>', required=False,
            help='Type of host.')
 @utils.arg('--control-attributes', metavar='<CONTROL_ATTRIBUTES>',
            required=False, help='Control attributes of host.')
-@utils.arg('--reserved', metavar='<RESERVED>', required=False, help='')
-@utils.arg('--on-maintenance', metavar='<ON_MAINTENANCE>',
-           required=False, help='')
 def do_host_update(service, args):
     """Update a host."""
     try:
