@@ -89,7 +89,8 @@ def do_segment_list(service, args):
 def do_segment_show(service, args):
     """Show a segment details."""
     try:
-        segment = service.get_segment(args.id)
+        segment_id = utils.get_uuid_by_name(service, args.id)
+        segment = service.get_segment(segment_id)
         utils.print_dict(segment.to_dict())
     except Exception as e:
         print(e)
@@ -131,6 +132,8 @@ def do_segment_create(service, args):
 def do_segment_update(service, args):
     """Update a segment."""
     try:
+        segment_id = utils.get_uuid_by_name(
+            service, args.id)
         attrs = {
             'name': args.name,
             'description': args.description,
@@ -138,7 +141,7 @@ def do_segment_update(service, args):
             'service_type': args.service_type,
         }
         attrs = utils.remove_unspecified_items(attrs)
-        segment = service.update_segment(args.id, **attrs)
+        segment = service.update_segment(segment_id, **attrs)
         utils.print_dict(segment.to_dict())
     except Exception as e:
         print(e)
@@ -149,7 +152,9 @@ def do_segment_update(service, args):
 def do_segment_delete(service, args):
     """Delete a segment."""
     try:
-        segment = service.delete_segment(args.id, ignore_missing=True)
+        segment_id = utils.get_uuid_by_name(
+            service, args.id)
+        segment = service.delete_segment(segment_id, ignore_missing=True)
         utils.print_dict(segment.to_dict())
     except Exception as e:
         print(e)
@@ -160,10 +165,12 @@ def do_segment_delete(service, args):
 def do_host_list(service, args):
     """List hosts."""
     try:
-        hosts = service.hosts(args.segment_id)
+        segment_id = utils.get_uuid_by_name(
+            service, args.segment_id)
+        hosts = service.hosts(segment_id)
         fields = [
-            'control_attributes', 'failover_segment_id', 'name',
-            'on_maintenance', 'type', 'uuid']
+            'uuid', 'name', 'type', 'control_attributes', 'reserved',
+            'on_maintenance', 'failover_segment_id']
         utils.print_list(hosts, fields)
     except Exception as e:
         print(e)
@@ -176,7 +183,11 @@ def do_host_list(service, args):
 def do_host_show(service, args):
     """Show a host details."""
     try:
-        host = service.get_host(args.segment_id, args.id)
+        segment_id = utils.get_uuid_by_name(
+            service, args.segment_id)
+        host_id = utils.get_uuid_by_name(
+            service, args.id, segment=segment_id)
+        host = service.get_host(segment_id, host_id)
         utils.print_dict(host.to_dict())
     except Exception as e:
         print(e)
@@ -197,6 +208,8 @@ def do_host_show(service, args):
 def do_host_create(service, args):
     """Create a host."""
     try:
+        segment_id = utils.get_uuid_by_name(
+            service, args.segment_id)
         attrs = {
             'name': args.name,
             'type': args.type,
@@ -204,7 +217,8 @@ def do_host_create(service, args):
             'reserved': args.reserved,
             'on_maintenance': args.on_maintenance,
         }
-        host = service.create_host(args.segment_id, **attrs)
+        utils.remove_unspecified_items(attrs)
+        host = service.create_host(segment_id, **attrs)
         utils.print_dict(host.to_dict())
     except Exception as e:
         print(e)
@@ -226,6 +240,10 @@ def do_host_create(service, args):
 def do_host_update(service, args):
     """Update a host."""
     try:
+        segment_id = utils.get_uuid_by_name(
+            service, args.segment_id)
+        host_id = utils.get_uuid_by_name(
+            service, args.id, segment=segment_id)
         attrs = {
             'name': args.name,
             'type': args.type,
@@ -234,20 +252,24 @@ def do_host_update(service, args):
             'on_maintenance': args.on_maintenance,
         }
         attrs = utils.remove_unspecified_items(attrs)
-        host = service.update_host(args.segment_id, args.id, **attrs)
+        host = service.update_host(segment_id, host_id, **attrs)
         utils.print_dict(host.to_dict())
     except Exception as e:
         print(e)
 
 
 @utils.arg('--segment-id', metavar='<SEGMENT_ID>', required=True,
-           help='Segment ID of the host to delete.')
+           help='Name or ID of segment.')
 @utils.arg('--id', metavar='<HOST_ID>', required=True,
            help='Name or ID of the host to delete.')
 def do_host_delete(service, args):
     """Delete a host."""
     try:
-        host = service.delete_host(args.segment_id, args.id)
+        segment_id = utils.get_uuid_by_name(
+            service, args.segment_id)
+        host_id = utils.get_uuid_by_name(
+            service, args.id, segment=segment_id)
+        host = service.delete_host(segment_id, host_id)
         if host:
             utils.print_dict(host.to_dict())
     except Exception as e:
