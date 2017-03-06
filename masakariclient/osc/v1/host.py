@@ -242,7 +242,7 @@ class UpdateHost(command.ShowOne):
         return _show_host(masakari_client, parsed_args.segment_id, uuid)
 
 
-class DeleteHost(command.ShowOne):
+class DeleteHost(command.Command):
     """Delete a host."""
 
     def get_parser(self, prog_name):
@@ -267,7 +267,6 @@ class DeleteHost(command.ShowOne):
             segment=parsed_args.segment_id)
         masakari_client.delete_host(parsed_args.segment_id, uuid, False)
         print('Host deleted: %s' % parsed_args.host)
-        return ({}, {})
 
 
 def _show_host(masakari_client, segment_id, uuid):
