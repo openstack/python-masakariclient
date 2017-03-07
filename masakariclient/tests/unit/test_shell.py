@@ -33,7 +33,6 @@ class FakeClient(object):
     def __init__(self):
         super(FakeClient, self).__init__()
         self.service = FakeService()
-        return self.service
 
 
 class FakeService(object):
