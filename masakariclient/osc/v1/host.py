@@ -34,7 +34,7 @@ class ListHost(command.Lister):
         parser.add_argument(
             'segment_id',
             metavar='<segment_id>',
-            help=_('UUID of segment.')
+            help=_('Name or ID of segment.')
         )
         parser.add_argument(
             '--limit',
@@ -69,11 +69,14 @@ class ListHost(command.Lister):
 
     def take_action(self, parsed_args):
         masakari_client = self.app.client_manager.ha
+        segment_id = masakariclient_utils.get_uuid_by_name(
+            masakari_client, parsed_args.segment_id)
+
         columns = ['uuid', 'name', 'type', 'control_attributes', 'reserved',
                    'on_maintenance', 'failover_segment_id']
 
         queries = masakariclient_utils.format_sort_filter_params(parsed_args)
-        hosts = masakari_client.hosts(parsed_args.segment_id, **queries)
+        hosts = masakari_client.hosts(segment_id, **queries)
         formatters = {}
         return (
             columns,
@@ -90,7 +93,7 @@ class ShowHost(command.ShowOne):
         parser.add_argument(
             'segment_id',
             metavar='<segment_id>',
-            help=_('UUID of segment.')
+            help=_('Name or ID of segment.')
         )
         parser.add_argument(
             'host',
@@ -101,11 +104,13 @@ class ShowHost(command.ShowOne):
 
     def take_action(self, parsed_args):
         masakari_client = self.app.client_manager.ha
+        segment_id = masakariclient_utils.get_uuid_by_name(
+            masakari_client, parsed_args.segment_id)
         uuid = masakariclient_utils.get_uuid_by_name(
             masakari_client,
             parsed_args.host,
-            segment=parsed_args.segment_id)
-        return _show_host(masakari_client, parsed_args.segment_id, uuid)
+            segment=segment_id)
+        return _show_host(masakari_client, segment_id, uuid)
 
 
 class CreateHost(command.ShowOne):
@@ -131,7 +136,7 @@ class CreateHost(command.ShowOne):
         parser.add_argument(
             'segment_id',
             metavar='<segment_id>',
-            help=_('UUID of segment.')
+            help=_('Name or ID of segment.')
         )
         parser.add_argument(
             '--reserved',
@@ -151,6 +156,8 @@ class CreateHost(command.ShowOne):
 
     def take_action(self, parsed_args):
         masakari_client = self.app.client_manager.ha
+        segment_id = masakariclient_utils.get_uuid_by_name(
+            masakari_client, parsed_args.segment_id)
         attrs = {
             'name': parsed_args.name,
             'type': parsed_args.type,
@@ -163,13 +170,13 @@ class CreateHost(command.ShowOne):
 
         try:
             host = masakari_client.create_host(
-                segment_id=parsed_args.segment_id,
+                segment_id=segment_id,
                 **attrs)
         except Exception as ex:
             LOG.debug(_("Failed to create segment host: %s"), parsed_args)
             raise ex
         return _show_host(masakari_client,
-                          parsed_args.segment_id,
+                          segment_id,
                           host.uuid)
 
 
@@ -181,7 +188,7 @@ class UpdateHost(command.ShowOne):
         parser.add_argument(
             'segment_id',
             metavar='<segment_id>',
-            help=_('UUID of segment.')
+            help=_('Name or ID of segment.')
         )
         parser.add_argument(
             'host',
@@ -221,10 +228,12 @@ class UpdateHost(command.ShowOne):
 
     def take_action(self, parsed_args):
         masakari_client = self.app.client_manager.ha
+        segment_id = masakariclient_utils.get_uuid_by_name(
+            masakari_client, parsed_args.segment_id)
         uuid = masakariclient_utils.get_uuid_by_name(
             masakari_client,
             parsed_args.host,
-            segment=parsed_args.segment_id)
+            segment=segment_id)
         attrs = {
             'name': parsed_args.name,
             'type': parsed_args.type,
@@ -237,7 +246,7 @@ class UpdateHost(command.ShowOne):
 
         try:
             masakari_client.update_host(
-                segment_id=parsed_args.segment_id, host=uuid, **attrs)
+                segment_id=segment_id, host=uuid, **attrs)
         except sdk_exc.NotFoundException:
             # Reraise. To unify exceptions with other functions.
             LOG.debug(_("Segment host is not found: %s"), parsed_args)
@@ -247,7 +256,7 @@ class UpdateHost(command.ShowOne):
             LOG.debug(_("Failed to update segment host: %s"), parsed_args)
             raise ex
 
-        return _show_host(masakari_client, parsed_args.segment_id, uuid)
+        return _show_host(masakari_client, segment_id, uuid)
 
 
 class DeleteHost(command.Command):
@@ -258,7 +267,7 @@ class DeleteHost(command.Command):
         parser.add_argument(
             'segment_id',
             metavar='<segment_id>',
-            help=_('UUID of segment.')
+            help=_('Name or ID of segment.')
         )
         parser.add_argument(
             'host',
@@ -269,11 +278,13 @@ class DeleteHost(command.Command):
 
     def take_action(self, parsed_args):
         masakari_client = self.app.client_manager.ha
+        segment_id = masakariclient_utils.get_uuid_by_name(
+            masakari_client, parsed_args.segment_id)
         uuid = masakariclient_utils.get_uuid_by_name(
             masakari_client,
             parsed_args.host,
-            segment=parsed_args.segment_id)
-        masakari_client.delete_host(parsed_args.segment_id, uuid, False)
+            segment=segment_id)
+        masakari_client.delete_host(segment_id, uuid, False)
         print('Host deleted: %s' % parsed_args.host)
 
 
