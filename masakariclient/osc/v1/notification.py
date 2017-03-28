@@ -99,7 +99,9 @@ class CreateNotification(command.ShowOne):
         parser.add_argument(
             'type',
             metavar='<type>',
-            help=_('Type of failure.')
+            choices=['COMPUTE_HOST', 'VM', 'PROCESS'],
+            help=_('Type of failure. The supported options are: '
+                   'COMPUTE_HOST, VM, PROCESS.')
         )
         parser.add_argument(
             'hostname',
