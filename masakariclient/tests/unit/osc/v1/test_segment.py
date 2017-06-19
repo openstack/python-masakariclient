@@ -18,6 +18,7 @@ test_masakariclient
 Tests for `masakariclient` module.
 """
 import mock
+import uuid
 
 from osc_lib import utils
 
@@ -25,6 +26,9 @@ from masakariclient.osc.v1.segment import DeleteSegment
 from masakariclient.osc.v1.segment import ShowSegment
 from masakariclient.osc.v1.segment import UpdateSegment
 from masakariclient.tests import base
+
+SEGMENT_NAME = 'segment_name'
+SEGMENT_ID = uuid.uuid4()
 
 
 class FakeNamespace(object):
@@ -62,8 +66,8 @@ class FakeSegment(object):
         return {
             'created_at': '2016-12-18T05:47:46.000000',
             'updated_at': '2016-12-18T06:05:16.000000',
-            'uuid': '187dd15a-9c1d-4bf7-9f6c-014d5bc66992',
-            'name': 'test_segment',
+            'uuid': SEGMENT_ID,
+            'name': SEGMENT_NAME,
             'description': 'test_segment_description',
             'id': 1,
             'service_type': 'test_type',
@@ -71,35 +75,38 @@ class FakeSegment(object):
             }
 
 
-class TestV1ShowSegment(base.TestCase):
+class BaseV1Segment(base.TestCase):
     def setUp(self):
-        super(TestV1ShowSegment, self).setUp()
+        super(BaseV1Segment, self).setUp()
 
         self.app = mock.Mock()
         self.app_args = mock.Mock()
+        self.client_manager = mock.Mock()
+        self.app.client_manager.ha = self.client_manager
+        # segment data setup
+        self.dummy_segment = FakeSegment()
+
+
+class TestV1ShowSegment(BaseV1Segment):
+    def setUp(self):
+        super(TestV1ShowSegment, self).setUp()
+
         self.show_seg = ShowSegment(self.app,
                                     self.app_args,
                                     cmd_name='segment show')
-        self.client_manager = mock.Mock()
-        self.app.client_manager.ha = self.client_manager
         self.columns = ['created_at', 'updated_at', 'uuid',
                         'name', 'description', 'id', 'service_type',
                         'recovery_method',
                         ]
         # return value segment list
-        self.dummy_segments = []
-        self.dummy_segments.append(FakeSegments(
-            name='segment_name',
-            uuid='187dd15a-9c1d-4bf7-9f6c-014d5bc66992'))
-        # return value segment show
-        self.dummy_segment = FakeSegment()
+        self.dummy_segments = [FakeSegments(name=SEGMENT_NAME,
+                                            uuid=SEGMENT_ID)]
 
     @mock.patch.object(utils, 'get_dict_properties')
     def test_take_action_by_uuid(self, mock_get_dict_properties):
 
         # command param
-        parsed_args = FakeNamespace(
-            segment='187dd15a-9c1d-4bf7-9f6c-014d5bc66992')
+        parsed_args = FakeNamespace(segment=SEGMENT_ID)
         # return value segment list
         self.app.client_manager.ha.segments.return_value =\
             self.dummy_segments
@@ -115,14 +122,10 @@ class TestV1ShowSegment(base.TestCase):
     def test_take_action_by_name(self, mock_get_dict_properties):
 
         # command param
-        parsed_args = FakeNamespace(segment='segment_name')
+        parsed_args = FakeNamespace(segment=SEGMENT_NAME)
         # return value segment list
-        dummy_segments = []
-        dummy_segments.append(FakeSegments(
-            name='segment_name',
-            uuid='187dd15a-9c1d-4bf7-9f6c-014d5bc66992'))
         self.app.client_manager.ha.segments.return_value =\
-            dummy_segments
+            self.dummy_segments
         # return value segment show
         dummy_segment = FakeSegment()
         self.app.client_manager.ha.get_segment.return_value =\
@@ -133,38 +136,36 @@ class TestV1ShowSegment(base.TestCase):
             dummy_segment.to_dict(), self.columns, formatters={})
 
 
-class TestV1UpdateSegment(base.TestCase):
+class TestV1UpdateSegment(BaseV1Segment):
     def setUp(self):
         super(TestV1UpdateSegment, self).setUp()
 
-        self.app = mock.Mock()
-        self.app_args = mock.Mock()
         self.update_seg = UpdateSegment(self.app,
                                         self.app_args,
                                         cmd_name='segment update')
-        self.client_manager = mock.Mock()
-        self.app.client_manager.ha = self.client_manager
         self.columns = ['created_at', 'updated_at', 'uuid',
                         'name', 'description', 'id', 'service_type',
                         'recovery_method',
                         ]
         # segment list
-        self.dummy_segments = []
+        self.dummy_segments = [
+            FakeSegments(
+                name=SEGMENT_NAME, uuid=SEGMENT_ID,
+                description='FakeNamespace_description',
+                recovery_method='Update_recovery_method',
+                service_type='test_type')]
         self.dummy_segments.append(FakeSegments(
-            name='segment_name',
-            uuid='187dd15a-9c1d-4bf7-9f6c-014d5bc66992',
+            name=SEGMENT_NAME, uuid=SEGMENT_ID,
             description='FakeNamespace_description',
             recovery_method='Update_recovery_method',
             service_type='test_type'))
-        # segment data setup
-        self.dummy_segment = FakeSegment()
 
     @mock.patch.object(utils, 'get_dict_properties')
     def test_take_action_by_uuid(self, mock_get_dict_properties):
 
         # command param
         parsed_args = FakeNamespace(
-            segment='187dd15a-9c1d-4bf7-9f6c-014d5bc66992',
+            segment=SEGMENT_ID,
             description='FakeNamespace_description')
         # return value segment list
         self.app.client_manager.ha.segments.return_value =\
@@ -181,7 +182,7 @@ class TestV1UpdateSegment(base.TestCase):
     def test_take_action_by_name(self, mock_get_dict_properties):
 
         # command param
-        parsed_args = FakeNamespace(segment='segment_name')
+        parsed_args = FakeNamespace(segment=SEGMENT_NAME)
         # return value segment list
         self.app.client_manager.ha.segments.return_value =\
             self.dummy_segments
@@ -194,57 +195,53 @@ class TestV1UpdateSegment(base.TestCase):
             self.dummy_segment.to_dict(), self.columns, formatters={})
 
 
-class TestV1DeleteSegment(base.TestCase):
+class TestV1DeleteSegment(BaseV1Segment):
     def setUp(self):
         super(TestV1DeleteSegment, self).setUp()
 
-        self.app = mock.Mock()
-        self.app_args = mock.Mock()
         self.delete_seg = DeleteSegment(self.app,
                                         self.app_args,
                                         cmd_name='segment delete')
-        self.client_manager = mock.Mock()
-        self.app.client_manager.ha = self.client_manager
         # segment list
-        self.dummy_segments = []
-        self.dummy_segments.append(FakeSegments(
-            name='segment_name',
-            uuid='187dd15a-9c1d-4bf7-9f6c-014d5bc66992',
-            description='FakeNamespace_description',
-            recovery_method='Update_recovery_method',
-            service_type='test_type'))
-        # segment
-        self.dummy_segment = FakeSegment()
+        self.dummy_segments = [
+            FakeSegments(
+                name=SEGMENT_NAME, uuid=SEGMENT_ID,
+                description='FakeNamespace_description',
+                recovery_method='Update_recovery_method',
+                service_type='test_type')]
 
     def test_take_action_by_uuid(self):
 
         # command param
-        parsed_args = FakeNamespace(
-            segment='187dd15a-9c1d-4bf7-9f6c-014d5bc66992')
+        parsed_args = FakeNamespace(segment=[SEGMENT_ID])
 
         # return_value segment list
         self.app.client_manager.ha.segments.return_value =\
             self.dummy_segments
 
         # return_value segment delete
-        self.app.client_manager.ha.delete_segment.return_value =\
-            self.dummy_segment
+        self.app.client_manager.ha.delete_segment.return_value = None
 
         # segment delete
         self.delete_seg.take_action(parsed_args)
+
+        self.app.client_manager.ha.delete_segment.assert_called_once_with(
+            SEGMENT_ID, False)
 
     def test_take_action_by_name(self):
 
         # command param
-        parsed_args = FakeNamespace(segment='segment_name')
+        parsed_args = FakeNamespace(segment=[SEGMENT_NAME])
 
         # return_value segment list
         self.app.client_manager.ha.segments.return_value =\
             self.dummy_segments
 
         # return_value segment delete
-        self.app.client_manager.ha.delete_segment.return_value =\
-            self.dummy_segment
+        self.app.client_manager.ha.delete_segment.return_value = None
 
         # segment delete
         self.delete_seg.take_action(parsed_args)
+
+        self.app.client_manager.ha.delete_segment.assert_called_once_with(
+            SEGMENT_ID, False)

@@ -18,6 +18,7 @@ test_masakariclient
 Tests for `masakariclient` module.
 """
 import mock
+import uuid
 
 from osc_lib import utils
 
@@ -25,6 +26,11 @@ from masakariclient.osc.v1.host import DeleteHost
 from masakariclient.osc.v1.host import ShowHost
 from masakariclient.osc.v1.host import UpdateHost
 from masakariclient.tests import base
+
+HOST_NAME = 'host_name'
+HOST_ID = uuid.uuid4()
+SEGMENT_NAME = 'segment_name'
+SEGMENT_ID = uuid.uuid4()
 
 
 class FakeNamespace(object):
@@ -50,6 +56,14 @@ class FakeHosts(object):
         self.uuid = uuid
 
 
+class FakeSegments(object):
+    """Fake segment show detail."""
+    def __init__(self, name=None, uuid=None):
+        super(FakeSegments, self).__init__()
+        self.name = name
+        self.uuid = uuid
+
+
 class FakeHost(object):
     """Fake segment show detail."""
     def __init__(self,):
@@ -58,49 +72,53 @@ class FakeHost(object):
     def to_dict(self):
         return {
             'reserved': 'False',
-            'uuid': '124aa63c-bbe1-46c3-91a9-285fac7d86c6',
-            'segment_id': '870da19d-37ec-41d2-a4b2-7be54b0d6ec9',
+            'uuid': HOST_ID,
             'on_maintenance': False,
             'created_at': '2016-12-18T05:47:55.000000',
             'control_attributes': 'control_attributes',
             'updated_at': None,
-            'name': 'host_name',
+            'name': HOST_NAME,
             'type': 'auto',
             'id': 18,
-            'failover_segment_id': '187dd15a-9c1d-4bf7-9f6c-014d5bc66992',
+            'failover_segment_id': SEGMENT_ID,
             }
 
 
-class TestV1ShowHost(base.TestCase):
+class BaseV1Host(base.TestCase):
+    def setUp(self):
+        super(BaseV1Host, self).setUp()
+
+        self.app = mock.Mock()
+        self.app_args = mock.Mock()
+        self.client_manager = mock.Mock()
+        self.app.client_manager.ha = self.client_manager
+        self.columns = [
+            'created_at', 'updated_at', 'uuid', 'name', 'type',
+            'control_attributes', 'reserved', 'on_maintenance',
+            'failover_segment_id',
+        ]
+        # fake host list
+        self.dummy_hosts = [FakeHosts(name=HOST_NAME, uuid=HOST_ID)]
+        # fake segment list
+        self.dummy_segments = [FakeSegments(name=SEGMENT_NAME,
+                                            uuid=SEGMENT_ID)]
+        # fake host show
+        self.dummy_host = FakeHost()
+
+
+class TestV1ShowHost(BaseV1Host):
     def setUp(self):
         super(TestV1ShowHost, self).setUp()
-
-        self.app = mock.Mock()
-        self.app_args = mock.Mock()
         self.show_host = ShowHost(self.app, self.app_args,
                                   cmd_name='host show')
-        self.client_manager = mock.Mock()
-        self.app.client_manager.ha = self.client_manager
-        self.columns = [
-            'created_at', 'updated_at', 'uuid', 'name', 'type',
-            'control_attributes', 'reserved', 'on_maintenance',
-            'failover_segment_id',
-        ]
-        # fake host list
-        self.dummy_hosts = []
-        self.dummy_hosts.append(FakeHosts(
-            name='host_name',
-            uuid='124aa63c-bbe1-46c3-91a9-285fac7d86c6'))
-        # fake host show
-        self.dummy_host = FakeHost()
 
     @mock.patch.object(utils, 'get_dict_properties')
     def test_take_action_by_uuid(self, mock_get_dict_properties):
 
         # command param
-        parsed_args = FakeNamespace(
-            segment_id='187dd15a-9c1d-4bf7-9f6c-014d5bc66992',
-            host='124aa63c-bbe1-46c3-91a9-285fac7d86c6')
+        parsed_args = FakeNamespace(segment_id=SEGMENT_ID, host=HOST_ID)
+        # return value segment list
+        self.app.client_manager.ha.segments.return_value = self.dummy_segments
         # return value host list
         self.app.client_manager.ha.hosts.return_value = self.dummy_hosts
         # return value host show
@@ -115,9 +133,9 @@ class TestV1ShowHost(base.TestCase):
     def test_take_action_by_name(self, mock_get_dict_properties):
 
         # command param
-        parsed_args = FakeNamespace(
-            segment_id='187dd15a-9c1d-4bf7-9f6c-014d5bc66992',
-            host='host_name')
+        parsed_args = FakeNamespace(segment_id=SEGMENT_ID, host=HOST_NAME)
+        # return value segment list
+        self.app.client_manager.ha.segments.return_value = self.dummy_segments
         # return value host list
         self.app.client_manager.ha.hosts.return_value = self.dummy_hosts
         # return value host show
@@ -128,37 +146,20 @@ class TestV1ShowHost(base.TestCase):
             self.dummy_host.to_dict(), self.columns, formatters={})
 
 
-class TestV1UpdateHost(base.TestCase):
+class TestV1UpdateHost(BaseV1Host):
     def setUp(self):
         super(TestV1UpdateHost, self).setUp()
-
-        self.app = mock.Mock()
-        self.app_args = mock.Mock()
         self.update_host = UpdateHost(self.app, self.app_args,
                                       cmd_name='host update')
-        self.client_manager = mock.Mock()
-        self.app.client_manager.ha = self.client_manager
-        self.columns = [
-            'created_at', 'updated_at', 'uuid', 'name', 'type',
-            'control_attributes', 'reserved', 'on_maintenance',
-            'failover_segment_id',
-        ]
-        # fake host list
-        self.dummy_hosts = []
-        self.dummy_hosts.append(FakeHosts(
-            name='host_name',
-            uuid='124aa63c-bbe1-46c3-91a9-285fac7d86c6'))
-        # fake host show
-        self.dummy_host = FakeHost()
 
     @mock.patch.object(utils, 'get_dict_properties')
     def test_take_action_by_uuid(self, mock_get_dict_properties):
 
         # command param
         parsed_args = FakeNamespace(
-            segment_id='187dd15a-9c1d-4bf7-9f6c-014d5bc66992',
-            host='124aa63c-bbe1-46c3-91a9-285fac7d86c6',
-            reserved=True)
+            segment_id=SEGMENT_ID, host=HOST_ID, reserved=True)
+        # return value segment list
+        self.app.client_manager.ha.segments.return_value = self.dummy_segments
         # return value host list
         self.app.client_manager.ha.hosts.return_value = self.dummy_hosts
         # return value host show
@@ -173,9 +174,9 @@ class TestV1UpdateHost(base.TestCase):
 
         # command param
         parsed_args = FakeNamespace(
-            segment_id='187dd15a-9c1d-4bf7-9f6c-014d5bc66992',
-            host='host_name',
-            reserved=True)
+            segment_id=SEGMENT_ID, host=HOST_NAME, reserved=True)
+        # return value segment list
+        self.app.client_manager.ha.segments.return_value = self.dummy_segments
         # return value host list
         self.app.client_manager.ha.hosts.return_value = self.dummy_hosts
         # return value host show
@@ -186,53 +187,40 @@ class TestV1UpdateHost(base.TestCase):
             self.dummy_host.to_dict(), self.columns, formatters={})
 
 
-class TestV1DeleteHost(base.TestCase):
+class TestV1DeleteHost(BaseV1Host):
     def setUp(self):
         super(TestV1DeleteHost, self).setUp()
-
-        self.app = mock.Mock()
-        self.app_args = mock.Mock()
         self.delete_host = DeleteHost(self.app, self.app_args,
-                                      cmd_name='host update')
-        self.client_manager = mock.Mock()
-        self.app.client_manager.ha = self.client_manager
-        self.columns = [
-            'created_at', 'updated_at', 'uuid', 'name', 'type',
-            'control_attributes', 'reserved', 'on_maintenance',
-            'failover_segment_id',
-        ]
-        # fake host list
-        self.dummy_hosts = []
-        self.dummy_hosts.append(FakeHosts(
-            name='host_name',
-            uuid='124aa63c-bbe1-46c3-91a9-285fac7d86c6'))
-        # fake host show
-        self.dummy_host = FakeHost()
+                                      cmd_name='host delete')
 
     def test_take_action_by_uuid(self):
 
         # command param
-        parsed_args = FakeNamespace(
-            segment_id='187dd15a-9c1d-4bf7-9f6c-014d5bc66992',
-            host='124aa63c-bbe1-46c3-91a9-285fac7d86c6')
+        parsed_args = FakeNamespace(segment_id=SEGMENT_ID, host=HOST_ID)
+        # return value segment list
+        self.app.client_manager.ha.segments.return_value = self.dummy_segments
         # return value host list
         self.app.client_manager.ha.hosts.return_value = self.dummy_hosts
         # return value host show
-        self.app.client_manager.ha.get_host.return_value =\
-            self.dummy_host
+        self.app.client_manager.ha.delete_host.return_value = None
         # show the host specified by uuid
         self.delete_host.take_action(parsed_args)
+
+        self.app.client_manager.ha.delete_host.assert_called_once_with(
+            SEGMENT_ID, HOST_ID, False)
 
     def test_take_action_by_name(self):
 
         # command param
-        parsed_args = FakeNamespace(
-            segment_id='187dd15a-9c1d-4bf7-9f6c-014d5bc66992',
-            host='host_name')
+        parsed_args = FakeNamespace(segment_id=SEGMENT_ID, host=HOST_NAME)
+        # return value segment list
+        self.app.client_manager.ha.segments.return_value = self.dummy_segments
         # return value host list
         self.app.client_manager.ha.hosts.return_value = self.dummy_hosts
         # return value host show
-        self.app.client_manager.ha.get_host.return_value =\
-            self.dummy_host
+        self.app.client_manager.ha.delete_host.return_value = None
         # show the host specified by name
         self.delete_host.take_action(parsed_args)
+
+        self.app.client_manager.ha.delete_host.assert_called_once_with(
+            SEGMENT_ID, HOST_ID, False)
