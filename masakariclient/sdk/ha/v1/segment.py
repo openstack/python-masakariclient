@@ -27,8 +27,8 @@ class Segment(resource2.Resource):
     # 1] GET /v1/segments
     # 2] GET /v1/segments/<segment_uuid>
     # 3] POST /v1/segments
-    # 4] POST /v1/segments
-    # 5] POST /v1/segments
+    # 4] PUT /v1/segments/<segment_uuid>
+    # 5] DELETE /v1/segments/<segment_uuid>
     allow_list = True
     allow_get = True
     allow_create = True
