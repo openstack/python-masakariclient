@@ -17,14 +17,17 @@ test_masakariclient
 
 Tests for `masakariclient` module.
 """
+import ddt
 import mock
 
 from masakariclient.common import utils
+from masakariclient import shell
 from masakariclient.tests import base
 from masakariclient.tests.unit.v1 import fakes
 import masakariclient.v1.shell as ms
 
 
+@ddt.ddt
 class TestV1Shell(base.TestCase):
 
     def setUp(self):
@@ -48,7 +51,6 @@ class TestV1Shell(base.TestCase):
             'service_type': 'testsegment01_auto',
             'id': '14',
             'description': 'UPDATE Discription'}
-        self.segment_object = fakes.FakeSegment(self.segment_vals)
 
         self.hosts_vals = {
             'reserved': False,
@@ -75,6 +77,9 @@ class TestV1Shell(base.TestCase):
             'id': 10,
             'failover_segment_id': '6b985a8a-f8c0-42e4-beaa-d2fcd8dabbb6'}
         self.hosts_object = fakes.FakeHost(self.hosts_vals)
+
+    def _run_command(self, cmd):
+        shell.main(cmd.split())
 
     @mock.patch.object(utils, 'print_list')
     def test_do_notification_list(self, mock_print_list):
@@ -117,7 +122,8 @@ class TestV1Shell(base.TestCase):
     def test_do_segment_show(self, mock_get_uuid_by_name, mock_print_dict):
         mock_get_uuid_by_name.return_value = self.segment_vals.get('uuid')
         service = mock.Mock()
-        service.get_segment.return_value = self.segment_object
+        segment_object = fakes.FakeSegment(self.segment_vals)
+        service.get_segment.return_value = segment_object
         args = mock.Mock()
 
         ms.do_segment_show(service, args)
@@ -125,27 +131,50 @@ class TestV1Shell(base.TestCase):
         mock_print_dict.assert_called_once_with(self.segment_vals)
 
     @mock.patch.object(utils, 'print_dict')
-    def test_do_segment_create(self, mock_print_dict):
+    @ddt.data({"recovery_method": "auto"},
+              {"recovery_method": "reserved_host"},
+              {"recovery_method": "auto_priority"},
+              {"recovery_method": "rh_priority"})
+    def test_do_segment_create_with_all_recovery_methods(
+            self, ddt_data, mock_print_dict):
         service = mock.Mock()
-        service.create_segment.return_value = self.segment_object
         args = mock.Mock()
-
+        self.segment_vals['recovery_method'] = ddt_data['recovery_method']
+        segment_object = fakes.FakeSegment(self.segment_vals)
+        service.create_segment.return_value = segment_object
+        self._run_command(
+            "segment-create "
+            "--name 'test-segment'"
+            " --recovery-method %s "
+            "--service-type test_service" % ddt_data['recovery_method'])
         ms.do_segment_create(service, args)
-        mock_print_dict.assert_called_once_with(self.segment_vals)
+        mock_print_dict.assert_called_once_with(
+            self.segment_vals)
+
+    def test_do_segment_create_with_invalid_recovery_method(self):
+        cmd = ("segment-create --name 'test-segment' --recovery-method"
+               " invalid_recovery_method --service-type test_service")
+        self.assertRaises(SystemExit, self._run_command, cmd)
 
     @mock.patch.object(utils, 'print_dict')
     @mock.patch.object(utils, 'remove_unspecified_items')
     @mock.patch.object(utils, 'get_uuid_by_name')
-    def test_do_segment_update(self,
+    @ddt.data({"recovery_method": "auto"},
+              {"recovery_method": "reserved_host"},
+              {"recovery_method": "auto_priority"},
+              {"recovery_method": "rh_priority"})
+    def test_do_segment_update(self, ddt_data,
                                mock_get_uuid_by_name,
                                mock_remove_unspecified_items,
                                mock_print_dict):
         mock_get_uuid_by_name.return_value = self.segment_vals.get('uuid')
+        self.segment_vals['recovery_method'] = ddt_data['recovery_method']
         mock_remove_unspecified_items.return_value = self.segment_vals
         service = mock.Mock()
-        service.update_segment.return_value = self.segment_object
+        segment_object = fakes.FakeSegment(self.segment_vals)
+        service.update_segment.return_value = segment_object
         args = mock.Mock()
-
+        args.recovery_method = ddt_data['recovery_method']
         ms.do_segment_update(service, args)
         mock_get_uuid_by_name.assert_called_once_with(service, args.id)
         attrs = {
@@ -157,12 +186,18 @@ class TestV1Shell(base.TestCase):
         mock_remove_unspecified_items.assert_called_once_with(attrs)
         mock_print_dict.assert_called_once_with(self.segment_vals)
 
+    def test_do_segment_update_with_invalid_recovery_method(self):
+        cmd = ("segment-update --id bdba001e-c01b-490e-9405-fdf72d849b41 "
+               "--recovery-method invalid_recovery_method")
+        self.assertRaises(SystemExit, self._run_command, cmd)
+
     @mock.patch.object(utils, 'print_dict')
     @mock.patch.object(utils, 'get_uuid_by_name')
     def test_do_segment_delete(self, mock_get_uuid_by_name, mock_print_dict):
         mock_get_uuid_by_name.return_value = self.segment_vals.get('uuid')
         service = mock.Mock()
-        service.delete_segment.return_value = self.segment_object
+        segment_object = fakes.FakeSegment(self.segment_vals)
+        service.delete_segment.return_value = segment_object
         args = mock.Mock()
 
         ms.do_segment_delete(service, args)

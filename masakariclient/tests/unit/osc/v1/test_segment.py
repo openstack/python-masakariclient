@@ -17,11 +17,14 @@ test_masakariclient
 
 Tests for `masakariclient` module.
 """
+import ddt
 import mock
 import uuid
 
+from osc_lib.tests import utils as osc_lib_utils
 from osc_lib import utils
 
+from masakariclient.osc.v1.segment import CreateSegment
 from masakariclient.osc.v1.segment import DeleteSegment
 from masakariclient.osc.v1.segment import ShowSegment
 from masakariclient.osc.v1.segment import UpdateSegment
@@ -127,7 +130,7 @@ class TestV1ShowSegment(BaseV1Segment):
             self.dummy_segment.to_dict(), self.columns, formatters={})
 
 
-class TestV1UpdateSegment(BaseV1Segment):
+class TestV1UpdateSegment(BaseV1Segment, osc_lib_utils.TestCommand):
     def setUp(self):
         super(TestV1UpdateSegment, self).setUp()
 
@@ -154,15 +157,35 @@ class TestV1UpdateSegment(BaseV1Segment):
     def test_take_action_by_uuid(self):
 
         # command param
-        parsed_args = FakeNamespace(
-            segment=SEGMENT_ID,
-            description='FakeNamespace_description')
+        arglist = ['8c35987c-f416-46ca-be37-52f58fd8d294',
+                   '--name', 'test_segment',
+                   '--recovery_method', 'rh_priority',
+                   '--service_type', 'test_service',
+                   '--description', 'test_segment']
+
+        parsed_args = self.check_parser(self.update_seg, arglist, [])
         self._test_take_action(parsed_args)
 
     def test_take_action_by_name(self):
 
         # command param
-        parsed_args = FakeNamespace(segment=SEGMENT_NAME)
+        arglist = [SEGMENT_NAME, '--name', 'test_segment',
+                                 '--recovery_method', 'auto_priority',
+                                 '--service_type', 'test_service',
+                                 '--description', 'test_segment']
+
+        parsed_args = self.check_parser(self.update_seg, arglist, [])
+        self._test_take_action(parsed_args)
+
+    def test_update_segment_with_recovery_method_reserved_host(self):
+
+        arglist = ['8c35987c-f416-46ca-be37-52f58fd8d294',
+                   '--name', 'test_segment',
+                   '--recovery_method', 'reserved_host',
+                   '--service_type', 'test_service',
+                   '--description', 'test_segment']
+
+        parsed_args = self.check_parser(self.update_seg, arglist, [])
         self._test_take_action(parsed_args)
 
     @mock.patch.object(utils, 'get_dict_properties')
@@ -176,6 +199,14 @@ class TestV1UpdateSegment(BaseV1Segment):
         self.update_seg.take_action(parsed_args)
         mock_get_dict_properties.assert_called_once_with(
             self.dummy_segment.to_dict(), self.columns, formatters={})
+
+    def test_update_with_invalid_recovery_method(self):
+        arglist = [SEGMENT_NAME, '--name', 'test_segment',
+                   '--recovery_method', 'invalid-rcovery-method',
+                   '--service_type', 'test_service',
+                   '--description', 'test_segment']
+        self.assertRaises(osc_lib_utils.ParserException,
+                          self.check_parser, self.update_seg, arglist, [])
 
 
 class TestV1DeleteSegment(BaseV1Segment):
@@ -218,3 +249,40 @@ class TestV1DeleteSegment(BaseV1Segment):
 
         self.app.client_manager.ha.delete_segment.assert_called_once_with(
             SEGMENT_ID, False)
+
+
+@ddt.ddt
+class TestV1CreateSegment(BaseV1Segment, osc_lib_utils.TestCommand):
+
+    def setUp(self):
+        super(TestV1CreateSegment, self).setUp()
+        self.cmd = CreateSegment(self.app, None)
+
+    @ddt.data({"recovery_method": "auto"},
+              {"recovery_method": "reserved_host"},
+              {"recovery_method": "auto_priority"},
+              {"recovery_method": "rh_priority"})
+    def test_create_with_all_recovery_methods(self, ddt_data):
+        arglist = ['test_segment', ddt_data['recovery_method'], 'test_service',
+                   '--description', 'test_segment']
+        parsed_args = self.check_parser(self.cmd, arglist, [])
+        self._test_take_action(parsed_args, arglist)
+
+    def _test_take_action(self, parsed_args, arglist):
+        # return value segment list
+        self.app.client_manager.ha.segments.return_value = arglist
+        # return value segment data setup
+        self.app.client_manager.ha.get_segment.return_value = (
+            self.dummy_segment)
+        self.cmd.take_action(parsed_args)
+        self.app.client_manager.ha.create_segment.assert_called_with(
+            description='test_segment',
+            name='test_segment',
+            recovery_method=arglist[1],
+            service_type='test_service')
+
+    def test_create_segment_recovery_method_invalid(self):
+        arglist = ['test_segment', 'invalid_recovery_method', 'test_service',
+                   '--description', 'test_segment']
+        self.assertRaises(osc_lib_utils.ParserException,
+                          self.check_parser, self.cmd, arglist, [])

@@ -109,9 +109,9 @@ class CreateSegment(command.ShowOne):
         parser.add_argument(
             'recovery_method',
             metavar='<recovery_method>',
-            choices=['auto', 'reserved_host'],
+            choices=['auto', 'reserved_host', 'auto_priority', 'rh_priority'],
             help=_('Recovery method of segment. The supported options are: '
-                   'auto, reserved_host.')
+                   'auto, reserved_host, auto_priority, rh_priority.')
         )
         parser.add_argument(
             'service_type',
@@ -163,9 +163,9 @@ class UpdateSegment(command.ShowOne):
         parser.add_argument(
             '--recovery_method',
             metavar='<recovery_method>',
-            choices=['auto', 'reserved_host'],
+            choices=['auto', 'reserved_host', 'auto_priority', 'rh_priority'],
             help=_('Recovery method of segment. The supported options are: '
-                   'auto, reserved_host')
+                   'auto, reserved_host, auto_priority, rh_priority')
         )
         parser.add_argument(
             '--service_type',
