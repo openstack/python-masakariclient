@@ -101,9 +101,10 @@ def do_segment_show(service, args):
 @utils.arg('--name', metavar='<SEGMENT_NAME>', required=True,
            help='Name of segment.')
 @utils.arg('--recovery-method', metavar='<RECOVERY_METHOD>', required=True,
-           choices=['auto', 'reserved_host'],
+           choices=['auto', 'reserved_host', 'auto_priority', 'rh_priority'],
            help='Recovery method. '
-                'The supported options are: auto, reserved_host.')
+                'The supported options are: auto, reserved_host,'
+                ' auto_priority, rh_priority.')
 @utils.arg('--service-type', metavar='<SERVICE_TYPE>', required=True,
            help='Service type of segment.')
 @utils.arg('--description', metavar='<DESCRIPTION>', required=False,
@@ -128,10 +129,11 @@ def do_segment_create(service, args):
 @utils.arg('--name', metavar='<SEGMENT_NAME>',
            required=False, help='Name of segment.')
 @utils.arg('--recovery-method', metavar='<RECOVERY_METHOD>',
-           choices=['auto', 'reserved_host'],
+           choices=['auto', 'reserved_host', 'auto_priority', 'rh_priority'],
            required=False,
            help='Recovery method. '
-                'The supported options are: auto, reserved_host.')
+                'The supported options are: auto, reserved_host, '
+                'auto_priority, rh_priority.')
 @utils.arg('--service-type', metavar='<SERVICE_TYPE>',
            required=False, help='Service type of segment.')
 @utils.arg('--description', metavar='<DESCRIPTION>',
