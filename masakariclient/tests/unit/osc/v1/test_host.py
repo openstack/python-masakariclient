@@ -112,11 +112,20 @@ class TestV1ShowHost(BaseV1Host):
         self.show_host = ShowHost(self.app, self.app_args,
                                   cmd_name='host show')
 
-    @mock.patch.object(utils, 'get_dict_properties')
-    def test_take_action_by_uuid(self, mock_get_dict_properties):
+    def test_take_action_by_uuid(self):
 
         # command param
         parsed_args = FakeNamespace(segment_id=SEGMENT_ID, host=HOST_ID)
+        self._test_take_action(parsed_args)
+
+    def test_take_action_by_name(self):
+
+        # command param
+        parsed_args = FakeNamespace(segment_id=SEGMENT_ID, host=HOST_NAME)
+        self._test_take_action(parsed_args)
+
+    @mock.patch.object(utils, 'get_dict_properties')
+    def _test_take_action(self, parsed_args, mock_get_dict_properties):
         # return value segment list
         self.app.client_manager.ha.segments.return_value = self.dummy_segments
         # return value host list
@@ -125,22 +134,6 @@ class TestV1ShowHost(BaseV1Host):
         self.app.client_manager.ha.get_host.return_value = self.dummy_host
 
         # show the host specified by uuid
-        self.show_host.take_action(parsed_args)
-        mock_get_dict_properties.assert_called_once_with(
-            self.dummy_host.to_dict(), self.columns, formatters={})
-
-    @mock.patch.object(utils, 'get_dict_properties')
-    def test_take_action_by_name(self, mock_get_dict_properties):
-
-        # command param
-        parsed_args = FakeNamespace(segment_id=SEGMENT_ID, host=HOST_NAME)
-        # return value segment list
-        self.app.client_manager.ha.segments.return_value = self.dummy_segments
-        # return value host list
-        self.app.client_manager.ha.hosts.return_value = self.dummy_hosts
-        # return value host show
-        self.app.client_manager.ha.get_host.return_value = self.dummy_host
-        # show the host specified by name
         self.show_host.take_action(parsed_args)
         mock_get_dict_properties.assert_called_once_with(
             self.dummy_host.to_dict(), self.columns, formatters={})
@@ -152,12 +145,22 @@ class TestV1UpdateHost(BaseV1Host):
         self.update_host = UpdateHost(self.app, self.app_args,
                                       cmd_name='host update')
 
-    @mock.patch.object(utils, 'get_dict_properties')
-    def test_take_action_by_uuid(self, mock_get_dict_properties):
+    def test_take_action_by_uuid(self):
 
         # command param
         parsed_args = FakeNamespace(
             segment_id=SEGMENT_ID, host=HOST_ID, reserved=True)
+        self._test_take_action(parsed_args)
+
+    def test_take_action_by_name(self):
+
+        # command param
+        parsed_args = FakeNamespace(
+            segment_id=SEGMENT_ID, host=HOST_NAME, reserved=True)
+        self._test_take_action(parsed_args)
+
+    @mock.patch.object(utils, 'get_dict_properties')
+    def _test_take_action(self, parsed_args, mock_get_dict_properties):
         # return value segment list
         self.app.client_manager.ha.segments.return_value = self.dummy_segments
         # return value host list
@@ -165,23 +168,6 @@ class TestV1UpdateHost(BaseV1Host):
         # return value host show
         self.app.client_manager.ha.get_host.return_value = self.dummy_host
         # show the host specified by uuid
-        self.update_host.take_action(parsed_args)
-        mock_get_dict_properties.assert_called_once_with(
-            self.dummy_host.to_dict(), self.columns, formatters={})
-
-    @mock.patch.object(utils, 'get_dict_properties')
-    def test_take_action_by_name(self, mock_get_dict_properties):
-
-        # command param
-        parsed_args = FakeNamespace(
-            segment_id=SEGMENT_ID, host=HOST_NAME, reserved=True)
-        # return value segment list
-        self.app.client_manager.ha.segments.return_value = self.dummy_segments
-        # return value host list
-        self.app.client_manager.ha.hosts.return_value = self.dummy_hosts
-        # return value host show
-        self.app.client_manager.ha.get_host.return_value = self.dummy_host
-        # show the host specified by name
         self.update_host.take_action(parsed_args)
         mock_get_dict_properties.assert_called_once_with(
             self.dummy_host.to_dict(), self.columns, formatters={})
@@ -197,6 +183,15 @@ class TestV1DeleteHost(BaseV1Host):
 
         # command param
         parsed_args = FakeNamespace(segment_id=SEGMENT_ID, host=HOST_ID)
+        self._test_take_action(parsed_args)
+
+    def test_take_action_by_name(self):
+
+        # command param
+        parsed_args = FakeNamespace(segment_id=SEGMENT_ID, host=HOST_NAME)
+        self._test_take_action(parsed_args)
+
+    def _test_take_action(self, parsed_args):
         # return value segment list
         self.app.client_manager.ha.segments.return_value = self.dummy_segments
         # return value host list
@@ -204,22 +199,6 @@ class TestV1DeleteHost(BaseV1Host):
         # return value host show
         self.app.client_manager.ha.delete_host.return_value = None
         # show the host specified by uuid
-        self.delete_host.take_action(parsed_args)
-
-        self.app.client_manager.ha.delete_host.assert_called_once_with(
-            SEGMENT_ID, HOST_ID, False)
-
-    def test_take_action_by_name(self):
-
-        # command param
-        parsed_args = FakeNamespace(segment_id=SEGMENT_ID, host=HOST_NAME)
-        # return value segment list
-        self.app.client_manager.ha.segments.return_value = self.dummy_segments
-        # return value host list
-        self.app.client_manager.ha.hosts.return_value = self.dummy_hosts
-        # return value host show
-        self.app.client_manager.ha.delete_host.return_value = None
-        # show the host specified by name
         self.delete_host.take_action(parsed_args)
 
         self.app.client_manager.ha.delete_host.assert_called_once_with(

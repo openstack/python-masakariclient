@@ -102,38 +102,29 @@ class TestV1ShowSegment(BaseV1Segment):
         self.dummy_segments = [FakeSegments(name=SEGMENT_NAME,
                                             uuid=SEGMENT_ID)]
 
-    @mock.patch.object(utils, 'get_dict_properties')
-    def test_take_action_by_uuid(self, mock_get_dict_properties):
+    def test_take_action_by_uuid(self):
 
         # command param
         parsed_args = FakeNamespace(segment=SEGMENT_ID)
+        self._test_take_action(parsed_args)
+
+    def test_take_action_by_name(self):
+
+        # command param
+        parsed_args = FakeNamespace(segment=SEGMENT_NAME)
+        self._test_take_action(parsed_args)
+
+    @mock.patch.object(utils, 'get_dict_properties')
+    def _test_take_action(self, parsed_args, mock_get_dict_properties):
         # return value segment list
-        self.app.client_manager.ha.segments.return_value =\
-            self.dummy_segments
+        self.app.client_manager.ha.segments.return_value = self.dummy_segments
         # return value segment show
-        self.app.client_manager.ha.get_segment.return_value =\
-            self.dummy_segment
+        self.app.client_manager.ha.get_segment.return_value = (
+            self.dummy_segment)
         # show segment
         self.show_seg.take_action(parsed_args)
         mock_get_dict_properties.assert_called_once_with(
             self.dummy_segment.to_dict(), self.columns, formatters={})
-
-    @mock.patch.object(utils, 'get_dict_properties')
-    def test_take_action_by_name(self, mock_get_dict_properties):
-
-        # command param
-        parsed_args = FakeNamespace(segment=SEGMENT_NAME)
-        # return value segment list
-        self.app.client_manager.ha.segments.return_value =\
-            self.dummy_segments
-        # return value segment show
-        dummy_segment = FakeSegment()
-        self.app.client_manager.ha.get_segment.return_value =\
-            dummy_segment
-        # show segment
-        self.show_seg.take_action(parsed_args)
-        mock_get_dict_properties.assert_called_once_with(
-            dummy_segment.to_dict(), self.columns, formatters={})
 
 
 class TestV1UpdateSegment(BaseV1Segment):
@@ -160,35 +151,27 @@ class TestV1UpdateSegment(BaseV1Segment):
             recovery_method='Update_recovery_method',
             service_type='test_type'))
 
-    @mock.patch.object(utils, 'get_dict_properties')
-    def test_take_action_by_uuid(self, mock_get_dict_properties):
+    def test_take_action_by_uuid(self):
 
         # command param
         parsed_args = FakeNamespace(
             segment=SEGMENT_ID,
             description='FakeNamespace_description')
-        # return value segment list
-        self.app.client_manager.ha.segments.return_value =\
-            self.dummy_segments
-        # return value segment data setup
-        self.app.client_manager.ha.get_segment.return_value =\
-            self.dummy_segment
-        # segment update
-        self.update_seg.take_action(parsed_args)
-        mock_get_dict_properties.assert_called_once_with(
-            self.dummy_segment.to_dict(), self.columns, formatters={})
+        self._test_take_action(parsed_args)
 
-    @mock.patch.object(utils, 'get_dict_properties')
-    def test_take_action_by_name(self, mock_get_dict_properties):
+    def test_take_action_by_name(self):
 
         # command param
         parsed_args = FakeNamespace(segment=SEGMENT_NAME)
+        self._test_take_action(parsed_args)
+
+    @mock.patch.object(utils, 'get_dict_properties')
+    def _test_take_action(self, parsed_args, mock_get_dict_properties):
         # return value segment list
-        self.app.client_manager.ha.segments.return_value =\
-            self.dummy_segments
+        self.app.client_manager.ha.segments.return_value = self.dummy_segments
         # return value segment data setup
-        self.app.client_manager.ha.get_segment.return_value =\
-            self.dummy_segment
+        self.app.client_manager.ha.get_segment.return_value = (
+            self.dummy_segment)
         # segment update
         self.update_seg.take_action(parsed_args)
         mock_get_dict_properties.assert_called_once_with(
@@ -214,28 +197,18 @@ class TestV1DeleteSegment(BaseV1Segment):
 
         # command param
         parsed_args = FakeNamespace(segment=[SEGMENT_ID])
-
-        # return_value segment list
-        self.app.client_manager.ha.segments.return_value =\
-            self.dummy_segments
-
-        # return_value segment delete
-        self.app.client_manager.ha.delete_segment.return_value = None
-
-        # segment delete
-        self.delete_seg.take_action(parsed_args)
-
-        self.app.client_manager.ha.delete_segment.assert_called_once_with(
-            SEGMENT_ID, False)
+        self._test_take_action(parsed_args)
 
     def test_take_action_by_name(self):
 
         # command param
         parsed_args = FakeNamespace(segment=[SEGMENT_NAME])
+        self._test_take_action(parsed_args)
+
+    def _test_take_action(self, parsed_args):
 
         # return_value segment list
-        self.app.client_manager.ha.segments.return_value =\
-            self.dummy_segments
+        self.app.client_manager.ha.segments.return_value = self.dummy_segments
 
         # return_value segment delete
         self.app.client_manager.ha.delete_segment.return_value = None
