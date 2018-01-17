@@ -12,12 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from openstack import resource2
+from openstack import version
 
+from masakariclient.common import utils as masakariclient_utils
 from masakariclient.sdk.ha import ha_service
 
 
-class Host(resource2.Resource):
+if masakariclient_utils.is_new_sdk(version.__version__):
+    from openstack import resource
+    _new_sdk = True
+else:
+    from openstack import resource2 as resource
+    _new_sdk = False
+
+
+class Host(resource.Resource):
     resource_key = "host"
     resources_key = "hosts"
     base_path = "/segments/%(segment_id)s/hosts"
@@ -41,29 +50,29 @@ class Host(resource2.Resource):
     # for properties of host API
 
     #: A ID of representing this host
-    id = resource2.URI("id")
+    id = resource.URI("id")
     #: A Uuid of representing this host
-    uuid = resource2.Body("uuid")
+    uuid = resource.Body("uuid")
     #: A failover segment ID of this host(in URI)
-    segment_id = resource2.URI("segment_id")
+    segment_id = resource.URI("segment_id")
     #: A created time of this host
-    created_at = resource2.Body("created_at")
+    created_at = resource.Body("created_at")
     #: A latest updated time of this host
-    updated_at = resource2.Body("updated_at")
+    updated_at = resource.Body("updated_at")
     #: A name of this host
-    name = resource2.Body("name")
+    name = resource.Body("name")
     #: A type of this host
-    type = resource2.Body("type")
+    type = resource.Body("type")
     #: A control attributes of this host
-    control_attributes = resource2.Body("control_attributes")
+    control_attributes = resource.Body("control_attributes")
     #: A maintenance status of this host
-    on_maintenance = resource2.Body("on_maintenance")
+    on_maintenance = resource.Body("on_maintenance")
     #: A reservation status of this host
-    reserved = resource2.Body("reserved")
+    reserved = resource.Body("reserved")
     #: A failover segment ID of this host(in Body)
-    failover_segment_id = resource2.Body("failover_segment_id")
+    failover_segment_id = resource.Body("failover_segment_id")
 
-    _query_mapping = resource2.QueryParameters(
+    _query_mapping = resource.QueryParameters(
         "sort_key", "sort_dir", failover_segment_id="failover_segment_id",
         type="type", on_maintenance="on_maintenance", reserved="reserved")
 
@@ -72,7 +81,11 @@ class Host(resource2.Resource):
         request = self._prepare_request(prepend_key=prepend_key)
         del request.body['id']
         request_body = {"host": request.body}
-        res = session.put(request.uri, endpoint_filter=self.service,
-                          json=request_body, headers=request.headers)
+        if _new_sdk:
+            res = session.put(request.url, endpoint_filter=self.service,
+                              json=request_body, headers=request.headers)
+        else:
+            res = session.put(request.uri, endpoint_filter=self.service,
+                              json=request_body, headers=request.headers)
         self._translate_response(res, has_body=has_body)
         return self

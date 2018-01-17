@@ -12,12 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from openstack import resource2
+from openstack import version
 
+from masakariclient.common import utils as masakariclient_utils
 from masakariclient.sdk.ha import ha_service
 
 
-class Notification(resource2.Resource):
+if masakariclient_utils.is_new_sdk(version.__version__):
+    from openstack import resource
+else:
+    from openstack import resource2 as resource
+
+
+class Notification(resource.Resource):
     resource_key = "notification"
     resources_key = "notifications"
     base_path = "/notifications"
@@ -39,27 +46,27 @@ class Notification(resource2.Resource):
     # for properties of notifications API
 
     #: A ID of representing this notification.
-    id = resource2.Body("id")
+    id = resource.Body("id")
     #: A Uuid of representing this notification.
-    notification_uuid = resource2.Body("notification_uuid")
+    notification_uuid = resource.Body("notification_uuid")
     #: A created time of representing this notification.
-    created_at = resource2.Body("created_at")
+    created_at = resource.Body("created_at")
     #: A latest updated time of representing this notification.
-    updated_at = resource2.Body("updated_at")
+    updated_at = resource.Body("updated_at")
     #: The type of failure. Valuse values include ''COMPUTE_HOST'',
     #: ''VM'', ''PROCESS''
-    type = resource2.Body("type")
+    type = resource.Body("type")
     #: The hostname of this notification.
-    hostname = resource2.Body("hostname")
+    hostname = resource.Body("hostname")
     #: The status for this notitication.
-    status = resource2.Body("status")
+    status = resource.Body("status")
     #: The generated_time for this notitication.
-    generated_time = resource2.Body("generated_time")
+    generated_time = resource.Body("generated_time")
     #: The payload of this notification.
-    payload = resource2.Body("payload")
+    payload = resource.Body("payload")
     #: The source host uuid of this notification.
-    source_host_uuid = resource2.Body("source_host_uuid")
+    source_host_uuid = resource.Body("source_host_uuid")
 
-    _query_mapping = resource2.QueryParameters(
+    _query_mapping = resource.QueryParameters(
         "sort_key", "sort_dir", source_host_uuid="source_host_uuid",
         type="type", status="status", generated_since="generated-since")
