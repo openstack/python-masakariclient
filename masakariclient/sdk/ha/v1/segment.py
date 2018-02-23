@@ -12,12 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from openstack import resource2
+from openstack import version
 
+from masakariclient.common import utils as masakariclient_utils
 from masakariclient.sdk.ha import ha_service
 
 
-class Segment(resource2.Resource):
+if masakariclient_utils.is_new_sdk(version.__version__):
+    from openstack import resource
+    _new_sdk = True
+else:
+    from openstack import resource2 as resource
+    _new_sdk = False
+
+
+class Segment(resource.Resource):
     resource_key = "segment"
     resources_key = "segments"
     base_path = "/segments"
@@ -41,23 +50,23 @@ class Segment(resource2.Resource):
     # for properties of each API
 
     #: A ID of representing this segment.
-    id = resource2.Body("id")
+    id = resource.Body("id")
     #: A Uuid of representing this segment.
-    uuid = resource2.Body("uuid")
+    uuid = resource.Body("uuid")
     #: A created time of representing this segment.
-    created_at = resource2.Body("created_at")
+    created_at = resource.Body("created_at")
     #: A latest updated time of representing this segment.
-    updated_at = resource2.Body("updated_at")
+    updated_at = resource.Body("updated_at")
     #: The name of this segment.
-    name = resource2.Body("name")
+    name = resource.Body("name")
     #: The description of this segment.
-    description = resource2.Body("description")
+    description = resource.Body("description")
     #: The recovery method of this segment.
-    recovery_method = resource2.Body("recovery_method")
+    recovery_method = resource.Body("recovery_method")
     #: The service type of this segment.
-    service_type = resource2.Body("service_type")
+    service_type = resource.Body("service_type")
 
-    _query_mapping = resource2.QueryParameters(
+    _query_mapping = resource.QueryParameters(
         "sort_key", "sort_dir", recovery_method="recovery_method",
         service_type="service_type")
 
@@ -66,7 +75,11 @@ class Segment(resource2.Resource):
         request = self._prepare_request(prepend_key=prepend_key)
         del request.body['id']
         request_body = {"segment": request.body}
-        ret = session.put(request.uri, endpoint_filter=self.service,
-                          json=request_body, headers=request.headers)
+        if _new_sdk:
+            ret = session.put(request.url, endpoint_filter=self.service,
+                              json=request_body, headers=request.headers)
+        else:
+            ret = session.put(request.uri, endpoint_filter=self.service,
+                              json=request_body, headers=request.headers)
         self._translate_response(ret, has_body=has_body)
         return self

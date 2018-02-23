@@ -22,6 +22,10 @@ from masakariclient.sdk.ha import ha_service
 LOG = logging.getLogger(__name__)
 
 
+# TODO(mordred) This will need to be updated, which will be an API break.
+# Not sure what the best way to deal with that is. Perhaps just add a
+# config argument and use it if it's there. I mean, a human can't create
+# a Profile once they've installed a new enough SDK.
 def create_connection(prof=None, user_agent=None, **kwargs):
     """Create connection to masakari_api."""
 

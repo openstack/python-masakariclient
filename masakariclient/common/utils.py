@@ -227,3 +227,18 @@ def get_uuid_by_name(manager, name, segment=None):
                 uuid = getattr(item, 'uuid')
                 break
     return uuid
+
+
+def is_new_sdk(sdk_version):
+    """Returns whether the openstacksdk version is new.
+
+    :param version: Version of openstacksdk
+    :return: Returns False if the version is 0.9.19 or 0.10.0.
+             Otherwise returns True.
+    """
+    # NOTE(Takahara): This sdk version check will be removed once the minimum
+    # openstacksdk version is bumped > 0.10.0.
+    if sdk_version.find('0.9.19') == 0 or sdk_version.find('0.10.0') == 0:
+        return False
+    else:
+        return True

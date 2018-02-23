@@ -12,15 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from openstack import proxy2
-from openstack import resource2
+from openstack import version
 
+from masakariclient.common import utils as masakariclient_utils
 from masakariclient.sdk.ha.v1 import host as _host
 from masakariclient.sdk.ha.v1 import notification as _notification
 from masakariclient.sdk.ha.v1 import segment as _segment
 
 
-class Proxy(proxy2.BaseProxy):
+if masakariclient_utils.is_new_sdk(version.__version__):
+    from openstack import proxy
+    from openstack import resource
+else:
+    from openstack import proxy2 as proxy
+    from openstack import resource2 as resource
+
+
+class Proxy(proxy.BaseProxy):
     """Proxy class for ha resource handling.
 
     Create method for each action of each API.
@@ -163,7 +171,7 @@ class Proxy(proxy2.BaseProxy):
         :raises: :class:`~openstack.exceptions.ResourceNotFound`
                  when no resource can be found.
         """
-        host_id = resource2.Resource._get_id(host)
+        host_id = resource.Resource._get_id(host)
         return self._get(_host.Host, host_id, segment_id=segment_id)
 
     def update_host(self, segment_id, host, **attrs):
@@ -176,7 +184,7 @@ class Proxy(proxy2.BaseProxy):
 
         :returns: The updated host
         """
-        host_id = resource2.Resource._get_id(host)
+        host_id = resource.Resource._get_id(host)
         return self._update(_host.Host, host_id, segment_id=segment_id,
                             **attrs)
 
@@ -195,6 +203,6 @@ class Proxy(proxy2.BaseProxy):
         :returns: ``None``
 
         """
-        host_id = resource2.Resource._get_id(host)
+        host_id = resource.Resource._get_id(host)
         return self._delete(_host.Host, host_id, segment_id=segment_id,
                             ignore_missing=ignore_missing)
