@@ -12,16 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from masakariclient.sdk.ha import connection
+from keystoneauth1.identity.generic import password as ks_password
+from keystoneauth1 import session as ks_session
+from openstack import connection
 
 
 class Client(object):
 
-    # TODO(mordred) This will need to be updated, which will be an API break.
-    # Not sure what the best way to deal with that is. Perhaps just add a
-    # config argument and use it if it's there. I mean, a human can't create
-    # a Profile once they've installed a new enough SDK.
-    def __init__(self, prof=None, user_agent=None, **kwargs):
-        self.con = connection.create_connection(
-            prof=prof, user_agent=user_agent, **kwargs)
-        self.service = self.con.ha
+    def __init__(self, **kwargs):
+
+        auth = ks_password.Password(
+            auth_url=kwargs.get('auth_url'),
+            username=kwargs.get('username'),
+            password=kwargs.get('password'),
+            user_domain_id=kwargs.get('user_domain_id'),
+            project_name=kwargs.get('project_name'),
+            project_domain_id=kwargs.get('project_domain_id'))
+        session = ks_session.Session(auth=auth)
+
+        self.con = connection.Connection(session=session)
+        self.service = self.con.instance_ha

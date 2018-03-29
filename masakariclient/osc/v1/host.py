@@ -246,7 +246,7 @@ class UpdateHost(command.ShowOne):
 
         try:
             masakari_client.update_host(
-                segment_id=segment_id, host=uuid, **attrs)
+                uuid, segment_id=segment_id, **attrs)
         except sdk_exc.NotFoundException:
             # Reraise. To unify exceptions with other functions.
             LOG.debug(_("Segment host is not found: %s"), parsed_args)
@@ -284,13 +284,14 @@ class DeleteHost(command.Command):
             masakari_client,
             parsed_args.host,
             segment=segment_id)
-        masakari_client.delete_host(segment_id, uuid, False)
+        masakari_client.delete_host(
+            uuid, segment_id=segment_id, ignore_missing=False)
         print('Host deleted: %s' % parsed_args.host)
 
 
 def _show_host(masakari_client, segment_id, uuid):
     try:
-        host = masakari_client.get_host(segment_id, uuid)
+        host = masakari_client.get_host(uuid, segment_id=segment_id)
     except sdk_exc.ResourceNotFound:
         raise exceptions.CommandError(_('Segment host is not found: %s'
                                         ) % uuid)

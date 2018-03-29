@@ -19,7 +19,10 @@ Tests for `masakariclient` module.
 """
 import mock
 
-from masakariclient.sdk.ha import connection
+from keystoneauth1.identity.generic import password as ks_password
+from keystoneauth1 import session as ks_session
+from openstack import connection
+
 from masakariclient.tests import base
 import masakariclient.v1.client as mc
 
@@ -35,16 +38,42 @@ class TestV1Client(base.TestCase):
 
     def setUp(self):
         super(TestV1Client, self).setUp()
+        self.auth = mock.Mock()
+        self.session = mock.Mock()
         self.conn = mock.Mock()
         self.service = mock.Mock()
-        self.conn.ha = self.service
+        self.conn.instance_ha = self.service
 
-    def test_client_init(self):
-        with mock.patch.object(connection,
-                               'create_connection') as mock_connection:
-            mock_connection.return_value = self.conn
+    @mock.patch.object(connection, 'Connection')
+    @mock.patch.object(ks_session, 'Session')
+    @mock.patch.object(ks_password, 'Password')
+    def test_client_init(self, mock_password, mock_session, mock_connection):
 
-            res = mc.Client()
+        mock_password.return_value = self.auth
+        mock_session.return_value = self.session
+        mock_connection.return_value = self.conn
 
-            self.assertEqual(self.conn.ha, res.service)
-            mock_connection.assert_called_once_with(prof=None, user_agent=None)
+        fake_auth_url = 'fake_auth_url'
+        fake_username = 'fake_username'
+        fake_password = 'fake_password'
+        fake_user_domain_id = 'fake_user_domain_id'
+        fake_project_name = 'fake_project_name'
+        fake_project_domain_id = 'fake_project_domain_id'
+
+        res = mc.Client(auth_url=fake_auth_url,
+                        username=fake_username,
+                        password=fake_password,
+                        user_domain_id=fake_user_domain_id,
+                        project_name=fake_project_name,
+                        project_domain_id=fake_project_domain_id)
+
+        self.assertEqual(self.conn.instance_ha, res.service)
+        mock_password.assert_called_once_with(
+            auth_url=fake_auth_url,
+            username=fake_username,
+            password=fake_password,
+            user_domain_id=fake_user_domain_id,
+            project_name=fake_project_name,
+            project_domain_id=fake_project_domain_id)
+        mock_session.assert_called_once_with(auth=self.auth)
+        mock_connection.assert_called_once_with(session=self.session)

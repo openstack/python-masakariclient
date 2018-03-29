@@ -135,6 +135,8 @@ class TestV1ShowHost(BaseV1Host):
 
         # show the host specified by uuid
         self.show_host.take_action(parsed_args)
+        self.app.client_manager.ha.get_host.assert_called_once_with(
+            HOST_ID, segment_id=SEGMENT_ID)
         mock_get_dict_properties.assert_called_once_with(
             self.dummy_host.to_dict(), self.columns, formatters={})
 
@@ -169,6 +171,10 @@ class TestV1UpdateHost(BaseV1Host):
         self.app.client_manager.ha.get_host.return_value = self.dummy_host
         # show the host specified by uuid
         self.update_host.take_action(parsed_args)
+        self.app.client_manager.ha.update_host.assert_called_once_with(
+            HOST_ID, segment_id=SEGMENT_ID, reserved=True)
+        self.app.client_manager.ha.get_host.assert_called_once_with(
+            HOST_ID, segment_id=SEGMENT_ID)
         mock_get_dict_properties.assert_called_once_with(
             self.dummy_host.to_dict(), self.columns, formatters={})
 
@@ -202,4 +208,4 @@ class TestV1DeleteHost(BaseV1Host):
         self.delete_host.take_action(parsed_args)
 
         self.app.client_manager.ha.delete_host.assert_called_once_with(
-            SEGMENT_ID, HOST_ID, False)
+            HOST_ID, segment_id=SEGMENT_ID, ignore_missing=False)

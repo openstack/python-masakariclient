@@ -196,7 +196,7 @@ def do_host_show(service, args):
             service, args.segment_id)
         host_id = utils.get_uuid_by_name(
             service, args.id, segment=segment_id)
-        host = service.get_host(segment_id, host_id)
+        host = service.get_host(host_id, segment_id=segment_id)
         utils.print_dict(host.to_dict())
     except Exception as e:
         print(e)
@@ -268,7 +268,7 @@ def do_host_update(service, args):
             'on_maintenance': args.on_maintenance,
         }
         attrs = utils.remove_unspecified_items(attrs)
-        host = service.update_host(segment_id, host_id, **attrs)
+        host = service.update_host(host_id, segment_id=segment_id, **attrs)
         utils.print_dict(host.to_dict())
     except Exception as e:
         print(e)
@@ -285,7 +285,7 @@ def do_host_delete(service, args):
             service, args.segment_id)
         host_id = utils.get_uuid_by_name(
             service, args.id, segment=segment_id)
-        host = service.delete_host(segment_id, host_id)
+        host = service.delete_host(host_id, segment_id=segment_id)
         if host:
             utils.print_dict(host.to_dict())
     except Exception as e:
