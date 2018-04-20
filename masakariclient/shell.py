@@ -111,6 +111,8 @@ class MasakariShell(object):
             'verify': args.verify,
             'token': args.token,
             'trust_id': args.trust_id,
+            'interface': args.interface,
+            'region_name': args.region_name,
         }
 
         return masakari_client.Client(api_ver, user_agent=USER_AGENT, **kwargs)
