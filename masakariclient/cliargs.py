@@ -158,3 +158,14 @@ def add_global_identity_args(parser):
         '--os-access-info', dest='access_info', metavar='ACCESS_INFO',
         default=utils.env('OS_ACCESS_INFO'),
         help=_('Access info, defaults to env[OS_ACCESS_INFO]'))
+
+    parser.add_argument(
+        '--os-interface', dest='interface', metavar='INTERFACE',
+        default=utils.env('OS_INTERFACE', default='internal'),
+        help=_('API Interface to use [public, internal, admin]'
+               ', defaults to env[OS_INTERFACE]'))
+
+    parser.add_argument(
+        '--os-region-name', dest='region_name', metavar='REGION_NAME',
+        default=utils.env('OS_REGION_NAME'),
+        help=_('Region of the cloud to use, defaults to env[OS_REGION_NAME]'))

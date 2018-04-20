@@ -18,12 +18,13 @@ from osc_lib import utils
 
 DEFAULT_HA_API_VERSION = '1'
 API_VERSION_OPTION = 'os_ha_api_version'
-API_NAME = 'ha'
 
 
 def make_client(instance):
-    """Returns a ha proxy"""
-    conn = connection.Connection(session=instance.session)
+    """Returns a instance_ha proxy"""
+    conn = connection.Connection(session=instance.session,
+                                 interface=instance.interface,
+                                 region_name=instance.region_name)
     return conn.instance_ha
 
 
