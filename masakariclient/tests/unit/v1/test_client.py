@@ -47,4 +47,4 @@ class TestV1Client(base.TestCase):
             res = mc.Client()
 
             self.assertEqual(self.conn.ha, res.service)
-            mock_connection.assert_called_once_with(prof=None, user_agent=None)
+            mock_connection.assert_called_once_with()

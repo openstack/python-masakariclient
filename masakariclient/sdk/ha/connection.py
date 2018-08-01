@@ -13,42 +13,37 @@
 # limitations under the License.
 
 import logging
+import pbr.version
 
+from keystoneauth1.identity.generic import password as ks_password
+from keystoneauth1 import session as ks_session
 from openstack import connection
-from openstack import profile
+sdk_ver = pbr.version.VersionInfo('openstacksdk').version_string()
+if sdk_ver in ['0.11.0']:
+    from masakariclient.sdk.ha.v1 import _proxy
+    from openstack import service_description
 
-from masakariclient.sdk.ha import ha_service
 
 LOG = logging.getLogger(__name__)
 
 
-# TODO(mordred) This will need to be updated, which will be an API break.
-# Not sure what the best way to deal with that is. Perhaps just add a
-# config argument and use it if it's there. I mean, a human can't create
-# a Profile once they've installed a new enough SDK.
-def create_connection(prof=None, user_agent=None, **kwargs):
-    """Create connection to masakari_api."""
+def create_connection(**kwargs):
+    auth = ks_password.Password(
+        auth_url=kwargs.get('auth_url'),
+        username=kwargs.get('username'),
+        password=kwargs.get('password'),
+        user_domain_name=kwargs['user_domain_name'],
+        user_domain_id=kwargs.get('user_domain_id'),
+        project_name=kwargs.get('project_name'),
+        project_domain_id=kwargs.get('project_domain_id'))
+    session = ks_session.Session(auth=auth)
 
-    if not prof:
-        prof = profile.Profile()
-
-    prof._add_service(ha_service.HAService(version="v1"))
-    interface = kwargs.pop('interface', None)
-    region_name = kwargs.pop('region_name', None)
-    if interface:
-        prof.set_interface('ha', interface)
-    if region_name:
-        prof.set_region('ha', region_name)
-
-    prof.set_api_version('ha', '1')
-
-    try:
-        conn = connection.Connection(profile=prof,
-                                     user_agent=user_agent,
-                                     **kwargs)
-        LOG.debug('Connection: %s', conn)
-        LOG.debug('masakari client initialized: %s', conn.ha)
-    except Exception as e:
-        raise e
+    if sdk_ver >= '0.11.1':
+        conn = connection.Connection(session=session)
+    else:
+        desc = service_description.ServiceDescription(service_type='ha',
+                                                      proxy_class=_proxy.Proxy)
+        conn = connection.Connection(session=session)
+        conn.add_service(desc)
 
     return conn

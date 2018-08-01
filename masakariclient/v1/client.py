@@ -17,11 +17,6 @@ from masakariclient.sdk.ha import connection
 
 class Client(object):
 
-    # TODO(mordred) This will need to be updated, which will be an API break.
-    # Not sure what the best way to deal with that is. Perhaps just add a
-    # config argument and use it if it's there. I mean, a human can't create
-    # a Profile once they've installed a new enough SDK.
-    def __init__(self, prof=None, user_agent=None, **kwargs):
-        self.con = connection.create_connection(
-            prof=prof, user_agent=user_agent, **kwargs)
+    def __init__(self, **kwargs):
+        self.con = connection.create_connection(**kwargs)
         self.service = self.con.ha
