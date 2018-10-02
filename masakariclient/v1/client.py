@@ -30,5 +30,8 @@ class Client(object):
             project_domain_id=kwargs.get('project_domain_id'))
         session = ks_session.Session(auth=auth)
 
-        self.con = connection.Connection(session=session)
+        self.con = connection.Connection(
+            session=session,
+            interface=kwargs.get('interface'),
+            region_name=kwargs.get('region_name'))
         self.service = self.con.instance_ha
