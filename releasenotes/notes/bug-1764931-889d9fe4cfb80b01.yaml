@@ -1,0 +1,10 @@
+---
+features:
+  - |
+    Added ``--os-region-name`` and ``--os-interface`` options to select which
+    endpoint it should use to connect to the masakari service.
+    If masakari services are running in multiple regions of your cloud,
+    you can specify `--os-region-name` in order to get OpenStack service
+    client for the specified region. By default, keystoneauth always selects
+    `public` interface endpoint from the service catalog. Now you can also
+    specify `admin` or `internal` in the --os-interface option.
