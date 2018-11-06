@@ -12,20 +12,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from openstack import connection
+import logging
+
 from osc_lib import utils
 
+LOG = logging.getLogger(__name__)
 
 DEFAULT_HA_API_VERSION = '1'
 API_VERSION_OPTION = 'os_ha_api_version'
+API_NAME = 'ha'
+API_VERSIONS = {
+    '1': 'masakariclient.v1.client.Client',
+}
 
 
 def make_client(instance):
     """Returns a instance_ha proxy"""
-    conn = connection.Connection(session=instance.session,
-                                 interface=instance.interface,
-                                 region_name=instance.region_name)
-    return conn.instance_ha
+    version = instance._api_version[API_NAME]
+    masakari_client = utils.get_client_class(
+        API_NAME,
+        version,
+        API_VERSIONS)
+
+    LOG.debug('Instantiating masakari service client: %s', masakari_client)
+    client = masakari_client(session=instance.session,
+                             interface=instance.interface,
+                             region_name=instance.region_name)
+    return client.service
 
 
 def build_option_parser(parser):

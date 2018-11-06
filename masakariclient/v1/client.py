@@ -20,18 +20,20 @@ from openstack import connection
 class Client(object):
 
     def __init__(self, **kwargs):
+        session = kwargs.get('session')
+        if session is None:
+            auth = ks_password.Password(
+                auth_url=kwargs.get('auth_url'),
+                username=kwargs.get('username'),
+                password=kwargs.get('password'),
+                user_domain_id=kwargs.get('user_domain_id'),
+                project_name=kwargs.get('project_name'),
+                project_domain_id=kwargs.get('project_domain_id'))
 
-        auth = ks_password.Password(
-            auth_url=kwargs.get('auth_url'),
-            username=kwargs.get('username'),
-            password=kwargs.get('password'),
-            user_domain_id=kwargs.get('user_domain_id'),
-            project_name=kwargs.get('project_name'),
-            project_domain_id=kwargs.get('project_domain_id'))
-        session = ks_session.Session(auth=auth)
+            session = ks_session.Session(auth=auth)
 
-        self.con = connection.Connection(
+        con = connection.Connection(
             session=session,
             interface=kwargs.get('interface'),
             region_name=kwargs.get('region_name'))
-        self.service = self.con.instance_ha
+        self.service = con.instance_ha
