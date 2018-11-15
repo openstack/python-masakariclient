@@ -17,9 +17,16 @@ test_masakariclient
 
 Tests for `masakariclient` module.
 """
+
 import ddt
 import mock
+import six
+import sys
 
+from openstack import exceptions as sdk_exc
+from openstack.instance_ha.v1 import _proxy
+
+from masakariclient.common.i18n import _
 from masakariclient.common import utils
 from masakariclient import shell
 from masakariclient.tests import base
@@ -204,6 +211,31 @@ class TestV1Shell(base.TestCase):
         mock_get_uuid_by_name.assert_called_once_with(service, args.id)
         mock_print_dict.assert_called_once_with(self.segment_vals)
 
+    @mock.patch.object(utils, 'get_uuid_by_name')
+    @mock.patch.object(_proxy.Proxy, 'delete_segment')
+    def test_do_segment_delete_with_non_existing_uuid(
+            self, mock_get_uuid_by_name, mock_delete_segment):
+        mock_get_uuid_by_name.return_value = self.segment_vals.get('uuid')
+
+        expected_msg = _("No failover segment with "
+                         "id (%s)") % mock_get_uuid_by_name
+
+        def fake_delete_segment(self, mock_get_uuid_by_name,
+                                ignore_missing=False):
+            if not ignore_missing:
+                raise sdk_exc.ResourceNotFound(expected_msg)
+
+        mock_delete_segment.side_effect = fake_delete_segment
+        service = mock.Mock()
+        args = mock.Mock()
+
+        original = sys.stdout
+        sys.stdout = six.StringIO()
+        ms.do_segment_delete(service, args)
+        output = sys.stdout.getvalue()
+        sys.stdout = original
+        self.assertIn(expected_msg, output)
+
     @mock.patch.object(utils, 'print_list')
     @mock.patch.object(utils, 'get_uuid_by_name')
     def test_do_host_list(self, mock_get_uuid_by_name, mock_print_list):
@@ -309,3 +341,30 @@ class TestV1Shell(base.TestCase):
         mock_get_uuid_by_name.assert_any_call(
             service, args.id, segment=self.segment_vals.get('uuid'))
         mock_print_dict.assert_called_once_with(self.hosts_vals)
+
+    @mock.patch.object(utils, 'get_uuid_by_name')
+    @mock.patch.object(_proxy.Proxy, 'delete_host')
+    def test_do_host_delete_with_non_existing_uuid(self,
+                                                   mock_get_uuid_by_name,
+                                                   mock_delete_host):
+        mock_get_uuid_by_name.return_value = self.segment_vals.get('uuid')
+        host_id = self.hosts_vals.get('uuid')
+        expected_msg = _("Host '%(host_id)s' under failover_segment " "'"
+                         "%(seg_id)s' ""could not be found") % {
+            'host_id': host_id, 'seg_id': mock_get_uuid_by_name}
+
+        def fake_delete_host(
+                host_id, mock_get_uuid_by_name, ignore_missing=False):
+            if not ignore_missing:
+                raise sdk_exc.ResourceNotFound(expected_msg)
+
+        mock_delete_host.side_effect = fake_delete_host
+        service = mock.Mock()
+        args = mock.Mock()
+
+        original = sys.stdout
+        sys.stdout = six.StringIO()
+        ms.do_host_delete(service, args)
+        output = sys.stdout.getvalue()
+        sys.stdout = original
+        self.assertIn(expected_msg, output)

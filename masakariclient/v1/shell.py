@@ -163,7 +163,7 @@ def do_segment_delete(service, args):
     try:
         segment_id = utils.get_uuid_by_name(
             service, args.id)
-        segment = service.delete_segment(segment_id, ignore_missing=True)
+        segment = service.delete_segment(segment_id, ignore_missing=False)
         utils.print_dict(segment.to_dict())
     except Exception as e:
         print(e)
@@ -285,8 +285,8 @@ def do_host_delete(service, args):
             service, args.segment_id)
         host_id = utils.get_uuid_by_name(
             service, args.id, segment=segment_id)
-        host = service.delete_host(host_id, segment_id=segment_id)
-        if host:
-            utils.print_dict(host.to_dict())
+        host = service.delete_host(host_id, segment_id=segment_id,
+                                   ignore_missing=False)
+        utils.print_dict(host.to_dict())
     except Exception as e:
         print(e)
