@@ -21,9 +21,14 @@ LOG = logging.getLogger(__name__)
 DEFAULT_HA_API_VERSION = '1'
 API_VERSION_OPTION = 'os_ha_api_version'
 API_NAME = 'ha'
-API_VERSIONS = {
-    '1': 'masakariclient.v1.client.Client',
-}
+
+SUPPORTED_VERSIONS = [
+    '1',
+    '1.0'
+]
+
+API_VERSIONS = {v: 'masakariclient.v1.client.Client'
+                for v in SUPPORTED_VERSIONS}
 
 
 def make_client(instance):
@@ -37,7 +42,8 @@ def make_client(instance):
     LOG.debug('Instantiating masakari service client: %s', masakari_client)
     client = masakari_client(session=instance.session,
                              interface=instance.interface,
-                             region_name=instance.region_name)
+                             region_name=instance.region_name,
+                             api_version=instance._api_version[API_NAME])
     return client.service
 
 

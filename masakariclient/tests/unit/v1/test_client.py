@@ -82,4 +82,5 @@ class TestV1Client(base.TestCase):
         mock_session.assert_called_once_with(auth=self.auth)
         mock_connection.assert_called_once_with(
             session=self.session, interface=fake_interface,
-            region_name=fake_region_name)
+            region_name=fake_region_name,
+            ha_api_version=None)
