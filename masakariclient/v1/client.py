@@ -35,5 +35,6 @@ class Client(object):
         con = connection.Connection(
             session=session,
             interface=kwargs.get('interface'),
-            region_name=kwargs.get('region_name'))
+            region_name=kwargs.get('region_name'),
+            ha_api_version=kwargs.get('api_version'))
         self.service = con.instance_ha
