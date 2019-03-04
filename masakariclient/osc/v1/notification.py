@@ -18,6 +18,7 @@ from osc_lib import exceptions
 from osc_lib import utils
 from oslo_serialization import jsonutils
 
+from masakariclient import api_versions
 from masakariclient.common.i18n import _
 import masakariclient.common.utils as masakariclient_utils
 
@@ -151,7 +152,14 @@ def _show_notification(masakari_client, notification_uuid):
         'status',
         'source_host_uuid',
         'generated_time',
-        'payload',
+        'payload'
     ]
+
+    if masakari_client.default_microversion:
+        api_version = api_versions.APIVersion(
+            masakari_client.default_microversion)
+        if api_version >= api_versions.APIVersion("1.1"):
+            columns.append('recovery_workflow_details')
+
     return columns, utils.get_dict_properties(notification.to_dict(), columns,
                                               formatters=formatters)

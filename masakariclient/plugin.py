@@ -18,13 +18,14 @@ from osc_lib import utils
 
 LOG = logging.getLogger(__name__)
 
-DEFAULT_HA_API_VERSION = '1'
+DEFAULT_HA_API_VERSION = '1.1'
 API_VERSION_OPTION = 'os_ha_api_version'
 API_NAME = 'ha'
 
 SUPPORTED_VERSIONS = [
     '1',
-    '1.0'
+    '1.0',
+    '1.1'
 ]
 
 API_VERSIONS = {v: 'masakariclient.v1.client.Client'

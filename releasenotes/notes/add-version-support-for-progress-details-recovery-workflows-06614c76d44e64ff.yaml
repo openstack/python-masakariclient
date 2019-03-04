@@ -1,0 +1,7 @@
+---
+features:
+  - |
+    The 1.1 microversion is now supported. This introduces the following changes:
+
+    * User can get the `progress_details` of the notification in microversion 1.1. The default version
+      is set to 1.1 if not provided.

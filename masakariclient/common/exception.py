@@ -24,3 +24,8 @@ class BaseException(Exception):
 
 class CommandError(BaseException):
     """Invalid usage of CLI."""
+
+
+class UnsupportedVersion(Exception):
+    """User is trying to use an unsupported version of the API."""
+    pass
