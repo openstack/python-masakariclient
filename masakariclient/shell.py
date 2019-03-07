@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import print_function
+
 import argparse
 import logging
 import sys
@@ -185,6 +187,9 @@ class HelpFormatter(argparse.HelpFormatter):
 
 def main(args=None):
     try:
+        print(_("Deprecated: masakari CLI is deprecated and will be removed "
+                "after Stein is released. Use openstack CLI instead."),
+              file=sys.stderr)
         if args is None:
             args = sys.argv[1:]
 

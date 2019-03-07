@@ -1,0 +1,6 @@
+---
+deprecations:
+  - |
+    The masakari CLI is now deprecated. This is the signal that it is
+    time to start using the openstack CLI. No new features will be
+    added to the masakari CLI.
