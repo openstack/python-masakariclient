@@ -27,7 +27,7 @@ cover/
 !.coveragerc
 .tox
 nosetests.xml
-.testrepository
+.stestr
 .venv
 
 # Translations
@@ -56,3 +56,4 @@ ChangeLog
 
 # Files created by releasenotes build
 releasenotes/build
+
