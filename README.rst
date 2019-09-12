@@ -1,6 +1,6 @@
-===============================
+=====================
 python-masakariclient
-===============================
+=====================
 
 masakariclient module and a CLI tool for masakari
 
@@ -10,8 +10,8 @@ Note that this is a hard requirement.
 
 * Free software: Apache license
 * Documentation: http://docs.openstack.org/developer/python-masakariclient
-* Source: http://git.openstack.org/cgit/openstack/python-masakariclient
-* Bugs: http://bugs.launchpad.net/python-masakariclient
+* Source: https://opendev.org/openstack/python-masakariclient
+* Bugs: https://bugs.launchpad.net/python-masakariclient
 
 Features
 --------

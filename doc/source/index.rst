@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Welcome to python-masakariclient's documentation!
-========================================================
+=================================================
 
 Contents:
 
