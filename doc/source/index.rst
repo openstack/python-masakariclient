@@ -3,23 +3,32 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+=================================================
 Welcome to python-masakariclient's documentation!
 =================================================
 
-Contents:
+Masakariclient is a command-line client for Masakari.
+
+Contents
+========
 
 .. toctree::
    :maxdepth: 2
 
-   readme
-   installation
-   usage
-   contributing
+   install/index
+   cli/index
+   contributor/index
 
-Indices and tables
+Release Notes
+=============
+
+.. toctree::
+   :maxdepth: 1
+
+   Release Notes <https://docs.openstack.org/releasenotes/python-masakariclient/>
+
+Indices and Tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
-

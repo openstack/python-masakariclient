@@ -22,7 +22,8 @@ sys.path.insert(0, os.path.abspath('../..'))
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
     'openstackdocstheme',
-    'sphinx.ext.autodoc'
+    'sphinx.ext.autodoc',
+    'cliff.sphinxext',
     #'sphinx.ext.intersphinx',
 ]
 
@@ -80,3 +81,5 @@ repository_name = 'openstack/python-masakariclient'
 bug_project = 'python-masakariclient'
 bug_tag = ''
 
+# -- Options for cliff.sphinxext plugin ---------------------------------------
+autoprogram_cliff_application = 'openstack'
