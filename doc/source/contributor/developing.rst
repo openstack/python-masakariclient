@@ -70,7 +70,7 @@ list the environments with the ``-e`` option, separated by spaces:
 
 .. code-block:: bash
 
-    $ tox -e py27,py36,py37,pep8
+    $ tox -e py36,py37,pep8
 
 See ``tox.ini`` for the full list of available test environments.
 
