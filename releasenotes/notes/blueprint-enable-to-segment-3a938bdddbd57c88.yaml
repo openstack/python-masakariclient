@@ -1,0 +1,5 @@
+---
+features:
+  - |
+    Adds support for API microversion 1.2 with ``enabled`` flag for segments.
+    `Blueprint enable-to-segment <https://blueprints.launchpad.net/masakari/+spec/enable-to-segment>`__

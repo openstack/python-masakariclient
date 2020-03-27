@@ -86,6 +86,7 @@ class BaseV1Segment(base.TestCase):
         self.app = mock.Mock()
         self.app_args = mock.Mock()
         self.client_manager = mock.Mock()
+        self.client_manager.default_microversion = '1.0'
         self.app.client_manager.ha = self.client_manager
         # segment data setup
         self.dummy_segment = FakeSegment()
