@@ -204,5 +204,6 @@ def main(args=None):
             print(encodeutils.safe_encode(six.text_type(e)), sys.stderr)
         return 1
 
+
 if __name__ == "__main__":
     sys.exit(main())
