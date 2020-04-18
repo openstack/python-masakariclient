@@ -18,8 +18,9 @@ test_masakariclient
 Tests for `masakariclient` module.
 """
 
+from unittest import mock
+
 import ddt
-import mock
 import six
 import sys
 

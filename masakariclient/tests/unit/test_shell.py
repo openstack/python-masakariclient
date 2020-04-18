@@ -19,7 +19,8 @@ test_shell
 Tests for `masakariclient` module.
 """
 import logging
-import mock
+from unittest import mock
+
 import six
 import sys
 import testtools

@@ -18,7 +18,7 @@ test_masakariclient
 
 Tests for `masakariclient` module.
 """
-import mock
+from unittest import mock
 
 from masakariclient import client as mc
 from masakariclient.common import utils

@@ -17,7 +17,7 @@ test_masakariclient
 
 Tests for `masakariclient` module.
 """
-import mock
+from unittest import mock
 
 from keystoneauth1.identity.generic import password as ks_password
 from keystoneauth1 import session as ks_session

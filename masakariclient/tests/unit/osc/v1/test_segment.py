@@ -17,8 +17,9 @@ test_masakariclient
 
 Tests for `masakariclient` module.
 """
+from unittest import mock
+
 import ddt
-import mock
 import uuid
 
 from osc_lib.tests import utils as osc_lib_utils
