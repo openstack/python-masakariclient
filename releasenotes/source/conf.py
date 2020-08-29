@@ -98,7 +98,7 @@ exclude_patterns = []
 # show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = 'native'
 
 # A list of ignored prefixes for module index sorting.
 # modindex_common_prefix = []
@@ -193,9 +193,10 @@ htmlhelp_basename = 'MasakariClientReleaseNotesdoc'
 
 # -- Options for openstackdocstheme ---------------------------------------
 
-repository_name = 'openstack/python-masakariclient'
-bug_project = 'python-masakariclient'
-bug_tag = ''
+openstackdocs_repo_name = 'openstack/python-masakariclient'
+openstackdocs_bug_project = 'python-masakariclient'
+openstackdocs_bug_tag = ''
+openstackdocs_auto_name = False
 
 # -- Options for LaTeX output ---------------------------------------------
 

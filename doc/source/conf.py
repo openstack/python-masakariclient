@@ -49,7 +49,7 @@ add_function_parentheses = True
 add_module_names = True
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = 'native'
 
 # -- Options for HTML output --------------------------------------------------
 
@@ -77,9 +77,9 @@ latex_documents = [
 
 # -- Options for openstackdocstheme ---------------------------------------
 
-repository_name = 'openstack/python-masakariclient'
-bug_project = 'python-masakariclient'
-bug_tag = ''
+openstackdocs_repo_name = 'openstack/python-masakariclient'
+openstackdocs_bug_project = 'python-masakariclient'
+openstackdocs_bug_tag = ''
 
 # -- Options for cliff.sphinxext plugin ---------------------------------------
 autoprogram_cliff_application = 'openstack'
