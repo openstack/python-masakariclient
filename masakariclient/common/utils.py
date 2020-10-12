@@ -14,7 +14,6 @@
 
 import os
 import prettytable
-import six
 import textwrap
 
 from oslo_serialization import jsonutils
@@ -122,7 +121,7 @@ def print_list(objs, fields, formatters={}, sortby_index=None):
                 if data is None:
                     data = '-'
                 # '\r' would break the table, so remove it.
-                data = six.text_type(data).replace("\r", "")
+                data = str(data).replace("\r", "")
                 row.append(data)
         pt.add_row(row)
 
@@ -131,8 +130,7 @@ def print_list(objs, fields, formatters={}, sortby_index=None):
     else:
         result = encodeutils.safe_encode(pt.get_string())
 
-    if six.PY3:
-        result = result.decode()
+    result = result.decode()
 
     print(result)
 
@@ -147,10 +145,10 @@ def print_dict(d, dict_property="Property", dict_value="Value", wrap=0):
         if isinstance(v, (dict, list)):
             v = jsonutils.dumps(v)
         if wrap > 0:
-            v = textwrap.fill(six.text_type(v), wrap)
+            v = textwrap.fill(str(v), wrap)
         # if value has a newline, add in multiple rows
         # e.g. fault with stacktrace
-        if v and isinstance(v, six.string_types) and (r'\n' in v or '\r' in v):
+        if v and isinstance(v, str) and (r'\n' in v or '\r' in v):
             # '\r' would break the table, so remove it.
             if '\r' in v:
                 v = v.replace('\r', '')
@@ -166,8 +164,7 @@ def print_dict(d, dict_property="Property", dict_value="Value", wrap=0):
 
     result = encodeutils.safe_encode(pt.get_string())
 
-    if six.PY3:
-        result = result.decode()
+    result = result.decode()
 
     print(result)
 

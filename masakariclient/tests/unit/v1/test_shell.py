@@ -21,7 +21,7 @@ Tests for `masakariclient` module.
 from unittest import mock
 
 import ddt
-import six
+import io
 import sys
 
 from openstack import exceptions as sdk_exc
@@ -231,7 +231,7 @@ class TestV1Shell(base.TestCase):
         args = mock.Mock()
 
         original = sys.stdout
-        sys.stdout = six.StringIO()
+        sys.stdout = io.StringIO()
         ms.do_segment_delete(service, args)
         output = sys.stdout.getvalue()
         sys.stdout = original
@@ -364,7 +364,7 @@ class TestV1Shell(base.TestCase):
         args = mock.Mock()
 
         original = sys.stdout
-        sys.stdout = six.StringIO()
+        sys.stdout = io.StringIO()
         ms.do_host_delete(service, args)
         output = sys.stdout.getvalue()
         sys.stdout = original
