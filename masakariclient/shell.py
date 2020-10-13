@@ -17,7 +17,6 @@ import logging
 import sys
 
 from oslo_utils import encodeutils
-import six
 
 import masakariclient
 from masakariclient import cliargs
@@ -199,7 +198,7 @@ def main(args=None):
         if '--debug' in args or '-d' in args:
             raise
         else:
-            print(encodeutils.safe_encode(six.text_type(e)), sys.stderr)
+            print(encodeutils.safe_encode(str(e), sys.stderr))
         return 1
 
 

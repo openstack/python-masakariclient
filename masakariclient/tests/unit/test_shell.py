@@ -18,10 +18,10 @@ test_shell
 
 Tests for `masakariclient` module.
 """
+import io
 import logging
 from unittest import mock
 
-import six
 import sys
 import testtools
 
@@ -61,7 +61,7 @@ class TestMasakariShell(base.TestCase):
 
     def _shell(self, func, *args, **kwargs):
         orig_out = sys.stdout
-        sys.stdout = six.StringIO()
+        sys.stdout = io.StringIO()
         func(*args, **kwargs)
         output = sys.stdout.getvalue()
         sys.stdout.close()
