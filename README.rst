@@ -12,6 +12,7 @@ Note that this is a hard requirement.
 * Documentation: http://docs.openstack.org/developer/python-masakariclient
 * Source: https://opendev.org/openstack/python-masakariclient
 * Bugs: https://bugs.launchpad.net/python-masakariclient
+* Release Notes: https://docs.openstack.org/releasenotes/python-masakariclient
 
 Features
 --------
