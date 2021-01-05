@@ -55,8 +55,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'PythonMasakariClient Release Notes'
-copyright = u'2016, OpenStack Foundation'
+project = 'PythonMasakariClient Release Notes'
+copyright = '2016, OpenStack Foundation'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -216,8 +216,8 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     ('index', 'MasakariClientReleaseNotes.tex',
-     u'MasakariClient Release Notes Documentation',
-     u'MasakariClient Developers', 'manual'),
+     'MasakariClient Release Notes Documentation',
+     'MasakariClient Developers', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -247,8 +247,8 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'MasakariClientreleasenotes',
-     u'MasakariClient Release Notes Documentation',
-     [u'MasakariClient Developers'], 1)
+     'MasakariClient Release Notes Documentation',
+     ['MasakariClient Developers'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -262,8 +262,8 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     ('index', 'PythonMasakariClient',
-     u'PythonMasakariClient Release Notes Documentation',
-     u'Masakari developers', 'PythonMasakariClient',
+     'PythonMasakariClient Release Notes Documentation',
+     'Masakari developers', 'PythonMasakariClient',
      'One line description of project.', 'Miscellaneous')
 ]
 # Documents to append as an appendix to all manuals.
