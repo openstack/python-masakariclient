@@ -162,7 +162,7 @@ Example
 
     import copy
     import fixtures
-    import mock
+    from unittest import mock
     import os
 
     from osc_lib.api import auth
