@@ -2,6 +2,7 @@
     templates:
       - check-requirements
       - openstack-python3-wallaby-jobs
+      - openstackclient-plugin-jobs
       - publish-openstack-docs-pti
       - release-notes-jobs-python3
       - periodic-stable-jobs
