@@ -14,6 +14,7 @@
 
 import logging
 
+from openstack.connection import Connection
 from osc_lib import utils
 
 LOG = logging.getLogger(__name__)
@@ -29,24 +30,18 @@ SUPPORTED_VERSIONS = [
     '1.2',
 ]
 
-API_VERSIONS = {v: 'masakariclient.v1.client.Client'
+API_VERSIONS = {v: None
                 for v in SUPPORTED_VERSIONS}
 
 
 def make_client(instance):
     """Returns a instance_ha proxy"""
-    version = instance._api_version[API_NAME]
-    masakari_client = utils.get_client_class(
-        API_NAME,
-        version,
-        API_VERSIONS)
-
-    LOG.debug('Instantiating masakari service client: %s', masakari_client)
-    client = masakari_client(session=instance.session,
-                             interface=instance.interface,
-                             region_name=instance.region_name,
-                             api_version=instance._api_version[API_NAME])
-    return client.service
+    LOG.debug('Instantiating masakari service client')
+    con = Connection(session=instance.session,
+                     interface=instance.interface,
+                     region_name=instance.region_name,
+                     ha_api_version=instance._api_version[API_NAME])
+    return con.instance_ha
 
 
 def build_option_parser(parser):
