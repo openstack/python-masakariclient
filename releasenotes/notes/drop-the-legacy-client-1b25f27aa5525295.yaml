@@ -1,0 +1,6 @@
+---
+upgrade:
+  - |
+    The legacy Masakari client (invoked by calling ``masakari`` as opposed to
+    ``openstack``) has been removed. It has been deprecated since
+    Stein.

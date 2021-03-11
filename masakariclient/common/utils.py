@@ -12,20 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-import prettytable
-import textwrap
-
-from oslo_serialization import jsonutils
-from oslo_utils import encodeutils
-from oslo_utils import importutils
 from oslo_utils import uuidutils
 
 from masakariclient.common import exception as exc
 from masakariclient.common.i18n import _
 
 
-def format_parameters(params, parse_semicolon=True):
+def _format_parameters(params, parse_semicolon=True):
     """Reformat parameters into dict of format expected by the API."""
     if not params:
         return {}
@@ -62,113 +55,6 @@ def remove_unspecified_items(attrs):
     return attrs
 
 
-def import_versioned_module(version, submodule=None):
-    module = 'masakariclient.v%s' % version
-    if submodule:
-        module = '.'.join((module, submodule))
-    return importutils.import_module(module)
-
-
-def arg(*args, **kwargs):
-    """Decorator for CLI args."""
-
-    def _decorator(func):
-        if not hasattr(func, 'arguments'):
-            func.arguments = []
-
-        if (args, kwargs) not in func.arguments:
-            func.arguments.insert(0, (args, kwargs))
-
-        return func
-
-    return _decorator
-
-
-def env(*args, **kwargs):
-    """Returns the first environment variable set.
-
-    If all are empty, defaults to '' or keyword arg `default`.
-    """
-    for arg in args:
-        value = os.environ.get(arg)
-        if value:
-            return value
-    return kwargs.get('default', '')
-
-
-def print_list(objs, fields, formatters={}, sortby_index=None):
-    """Print list data by PrettyTable."""
-
-    if sortby_index is None:
-        sortby = None
-    else:
-        sortby = fields[sortby_index]
-    mixed_case_fields = ['serverId']
-    pt = prettytable.PrettyTable([f for f in fields], caching=False)
-    pt.align = 'l'
-
-    for o in objs:
-        row = []
-        for field in fields:
-            if field in formatters:
-                row.append(formatters[field](o))
-            else:
-                if field in mixed_case_fields:
-                    field_name = field.replace(' ', '_')
-                else:
-                    field_name = field.lower().replace(' ', '_')
-                data = getattr(o, field_name, '')
-                if data is None:
-                    data = '-'
-                # '\r' would break the table, so remove it.
-                data = str(data).replace("\r", "")
-                row.append(data)
-        pt.add_row(row)
-
-    if sortby is not None:
-        result = encodeutils.safe_encode(pt.get_string(sortby=sortby))
-    else:
-        result = encodeutils.safe_encode(pt.get_string())
-
-    result = result.decode()
-
-    print(result)
-
-
-def print_dict(d, dict_property="Property", dict_value="Value", wrap=0):
-    """Print dictionary data (eg. show) by PrettyTable."""
-
-    pt = prettytable.PrettyTable([dict_property, dict_value], caching=False)
-    pt.align = 'l'
-    for k, v in sorted(d.items()):
-        # convert dict to str to check length
-        if isinstance(v, (dict, list)):
-            v = jsonutils.dumps(v)
-        if wrap > 0:
-            v = textwrap.fill(str(v), wrap)
-        # if value has a newline, add in multiple rows
-        # e.g. fault with stacktrace
-        if v and isinstance(v, str) and (r'\n' in v or '\r' in v):
-            # '\r' would break the table, so remove it.
-            if '\r' in v:
-                v = v.replace('\r', '')
-            lines = v.strip().split(r'\n')
-            col1 = k
-            for line in lines:
-                pt.add_row([col1, line])
-                col1 = ''
-        else:
-            if v is None:
-                v = '-'
-            pt.add_row([k, v])
-
-    result = encodeutils.safe_encode(pt.get_string())
-
-    result = result.decode()
-
-    print(result)
-
-
 def format_sort_filter_params(parsed_args):
     queries = {}
     limit = parsed_args.limit
@@ -196,7 +82,7 @@ def format_sort_filter_params(parsed_args):
         queries['sort_dir'] = sort_dirs
 
     if parsed_args.filters:
-        queries.update(format_parameters(parsed_args.filters))
+        queries.update(_format_parameters(parsed_args.filters))
 
     return queries
 
