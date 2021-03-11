@@ -57,7 +57,7 @@ def format_parameters(params, parse_semicolon=True):
 def remove_unspecified_items(attrs):
     """Remove the items that don't have any values."""
     for key, value in list(attrs.items()):
-        if not value:
+        if value is None:
             del attrs[key]
     return attrs
 

@@ -18,7 +18,9 @@ from openstack import exceptions as sdk_exc
 from osc_lib.command import command
 from osc_lib import exceptions
 from osc_lib import utils
+from oslo_utils import strutils
 
+from masakariclient import api_versions
 from masakariclient.common.i18n import _
 import masakariclient.common.utils as masakariclient_utils
 
@@ -66,6 +68,12 @@ class ListSegment(command.Lister):
         masakari_client = self.app.client_manager.ha
         columns = ['uuid', 'name', 'description', 'service_type',
                    'recovery_method']
+
+        if masakari_client.default_microversion:
+            api_version = api_versions.APIVersion(
+                masakari_client.default_microversion)
+            if api_version >= api_versions.APIVersion("1.2"):
+                columns.append('is_enabled')
 
         queries = masakariclient_utils.format_sort_filter_params(parsed_args)
         segments = masakari_client.segments(**queries)
@@ -119,6 +127,12 @@ class CreateSegment(command.ShowOne):
             help=_('Service type of segment.')
         )
         parser.add_argument(
+            '--is_enabled',
+            metavar='<boolean>',
+            help=_('The enabled flag of this segment. '
+                   'Supported after microversion 1.2.')
+        )
+        parser.add_argument(
             '--description',
             metavar='<description>',
             help=_('Description of segment.')
@@ -133,6 +147,16 @@ class CreateSegment(command.ShowOne):
             'recovery_method': parsed_args.recovery_method,
             'service_type': parsed_args.service_type,
         }
+
+        if masakari_client.default_microversion:
+            api_version = api_versions.APIVersion(
+                masakari_client.default_microversion)
+            if (api_version >= api_versions.APIVersion("1.2") and
+                    parsed_args.is_enabled is not None):
+                attrs['is_enabled'] = strutils.bool_from_string(
+                    parsed_args.is_enabled,
+                    strict=True)
+
         # Remove not specified keys
         attrs = masakariclient_utils.remove_unspecified_items(attrs)
 
@@ -173,6 +197,12 @@ class UpdateSegment(command.ShowOne):
             help=_('Service type of segment.')
         )
         parser.add_argument(
+            '--is_enabled',
+            metavar='<boolean>',
+            help=_('The enabled flag of this segment. '
+                   'Supported after microversion 1.2.')
+        )
+        parser.add_argument(
             '--description',
             metavar='<description>',
             help=_('Description of segment.')
@@ -191,6 +221,16 @@ class UpdateSegment(command.ShowOne):
             'recovery_method': parsed_args.recovery_method,
             'service_type': parsed_args.service_type,
         }
+
+        if masakari_client.default_microversion:
+            api_version = api_versions.APIVersion(
+                masakari_client.default_microversion)
+            if (api_version >= api_versions.APIVersion("1.2") and
+                    parsed_args.is_enabled is not None):
+                attrs['is_enabled'] = strutils.bool_from_string(
+                    parsed_args.is_enabled,
+                    strict=True)
+
         # Remove not specified keys
         attrs = masakariclient_utils.remove_unspecified_items(attrs)
 
@@ -250,5 +290,12 @@ def _show_segment(masakari_client, segment_uuid):
         'service_type',
         'recovery_method',
     ]
+
+    if masakari_client.default_microversion:
+        api_version = api_versions.APIVersion(
+            masakari_client.default_microversion)
+        if api_version >= api_versions.APIVersion("1.2"):
+            columns.append('is_enabled')
+
     return columns, utils.get_dict_properties(segment.to_dict(), columns,
                                               formatters=formatters)
