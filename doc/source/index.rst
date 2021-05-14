@@ -27,6 +27,16 @@ Release Notes
 
    Release Notes <https://docs.openstack.org/releasenotes/python-masakariclient/>
 
+For Contributors
+================
+
+* If you are a new contributor to Python-masakariclient please refer: :doc:`contributor/contributing`
+
+  .. toctree::
+     :hidden:
+
+     contributor/contributing
+
 Indices and Tables
 ==================
 
