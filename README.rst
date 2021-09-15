@@ -9,7 +9,7 @@ Please fill here a long description which must be at least 3 lines wrapped on
 Note that this is a hard requirement.
 
 * Free software: Apache license
-* Documentation: http://docs.openstack.org/developer/python-masakariclient
+* Documentation: https://docs.openstack.org/python-masakariclient/latest/
 * Source: https://opendev.org/openstack/python-masakariclient
 * Bugs: https://bugs.launchpad.net/python-masakariclient
 * Release Notes: https://docs.openstack.org/releasenotes/python-masakariclient
