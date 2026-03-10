@@ -30,7 +30,7 @@ class ListHost(command.Lister):
     """List Hosts."""
 
     def get_parser(self, prog_name):
-        parser = super(ListHost, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
         parser.add_argument(
             'segment_id',
             metavar='<segment_id>',
@@ -89,7 +89,7 @@ class ShowHost(command.ShowOne):
     """Show host details."""
 
     def get_parser(self, prog_name):
-        parser = super(ShowHost, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
         parser.add_argument(
             'segment_id',
             metavar='<segment_id>',
@@ -117,7 +117,7 @@ class CreateHost(command.ShowOne):
     """Create a Host."""
 
     def get_parser(self, prog_name):
-        parser = super(CreateHost, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
         parser.add_argument(
             'name',
             metavar='<name>',
@@ -184,7 +184,7 @@ class UpdateHost(command.ShowOne):
     """Update a Host."""
 
     def get_parser(self, prog_name):
-        parser = super(UpdateHost, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
         parser.add_argument(
             'segment_id',
             metavar='<segment_id>',
@@ -263,7 +263,7 @@ class DeleteHost(command.Command):
     """Delete a host."""
 
     def get_parser(self, prog_name):
-        parser = super(DeleteHost, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
         parser.add_argument(
             'segment_id',
             metavar='<segment_id>',
