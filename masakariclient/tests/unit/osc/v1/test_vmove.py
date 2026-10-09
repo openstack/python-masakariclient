@@ -25,18 +25,18 @@ NOTIFICATION_ID = uuid.uuid4()
 SERVER_ID = uuid.uuid4()
 
 
-class FakeNamespace(object):
+class FakeNamespace:
     """Fake parser object."""
     def __init__(self, notification_id=None, vmove_id=None):
-        super(FakeNamespace, self).__init__()
+        super().__init__()
         self.notification_id = notification_id
         self.vmove_id = vmove_id
 
 
-class FakeVMove(object):
+class FakeVMove:
     """Fake notification show detail."""
     def __init__(self,):
-        super(FakeVMove, self).__init__()
+        super().__init__()
 
     def to_dict(self):
         return {
@@ -57,7 +57,7 @@ class FakeVMove(object):
 
 class BaseV1VMove(base.TestCase):
     def setUp(self):
-        super(BaseV1VMove, self).setUp()
+        super().setUp()
 
         self.app = mock.Mock()
         self.app_args = mock.Mock()
@@ -75,7 +75,7 @@ class BaseV1VMove(base.TestCase):
 
 class TestV1ShowVMove(BaseV1VMove):
     def setUp(self):
-        super(TestV1ShowVMove, self).setUp()
+        super().setUp()
         self.show_vmove = ShowVMove(self.app, self.app_args,
                                     cmd_name='vmove show')
 

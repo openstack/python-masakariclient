@@ -32,7 +32,7 @@ class ListSegment(command.Lister):
     """List segments."""
 
     def get_parser(self, prog_name):
-        parser = super(ListSegment, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
         parser.add_argument(
             '--limit',
             metavar='<limit>',
@@ -89,7 +89,7 @@ class ShowSegment(command.ShowOne):
     """Show segment details."""
 
     def get_parser(self, prog_name):
-        parser = super(ShowSegment, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
         parser.add_argument(
             'segment',
             metavar='<segment>',
@@ -108,7 +108,7 @@ class CreateSegment(command.ShowOne):
     """Create segment."""
 
     def get_parser(self, prog_name):
-        parser = super(CreateSegment, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
         parser.add_argument(
             'name',
             metavar='<name>',
@@ -173,7 +173,7 @@ class UpdateSegment(command.ShowOne):
     """Update a segment."""
 
     def get_parser(self, prog_name):
-        parser = super(UpdateSegment, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
         parser.add_argument(
             'segment',
             metavar='<segment>',
@@ -251,7 +251,7 @@ class DeleteSegment(command.Command):
     """Delete a segment(s)."""
 
     def get_parser(self, prog_name):
-        parser = super(DeleteSegment, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
         parser.add_argument(
             'segment',
             metavar='<segment>',

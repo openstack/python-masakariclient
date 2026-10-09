@@ -41,10 +41,10 @@ RECOVERY_WORKFLOW_DETAILS = [{
                     "as it is already disabled"}]}]
 
 
-class FakeNotification(object):
+class FakeNotification:
     """Fake notification show detail."""
     def __init__(self,):
-        super(FakeNotification, self).__init__()
+        super().__init__()
 
     def to_dict(self):
         return {
@@ -66,7 +66,7 @@ class FakeNotification(object):
 
 class BaseV1Notification(base.TestCase, osc_lib_utils.TestCommand):
     def setUp(self):
-        super(BaseV1Notification, self).setUp()
+        super().setUp()
         self.app = mock.Mock()
         self.app_args = mock.Mock()
         self.client_manager = mock.Mock()
@@ -100,6 +100,6 @@ class TestShowNotificationV1(BaseV1Notification):
 class TestShowNotificationV1_1(TestShowNotificationV1):
 
     def setUp(self):
-        super(TestShowNotificationV1_1, self).setUp()
+        super().setUp()
         self.client_manager.default_microversion = '1.1'
         self.columns.append('recovery_workflow_details')

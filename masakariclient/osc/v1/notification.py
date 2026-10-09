@@ -27,7 +27,7 @@ class ListNotification(command.Lister):
     """List notifications."""
 
     def get_parser(self, prog_name):
-        parser = super(ListNotification, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
         parser.add_argument(
             '--limit',
             metavar='<limit>',
@@ -78,7 +78,7 @@ class ShowNotification(command.ShowOne):
     """Show notification details."""
 
     def get_parser(self, prog_name):
-        parser = super(ShowNotification, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
         parser.add_argument(
             'notification',
             metavar='<notification>',
@@ -96,7 +96,7 @@ class CreateNotification(command.ShowOne):
     """Create notification."""
 
     def get_parser(self, prog_name):
-        parser = super(CreateNotification, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
         parser.add_argument(
             'type',
             metavar='<type>',

@@ -35,12 +35,12 @@ SEGMENT_NAME = 'segment_name'
 SEGMENT_ID = uuid.uuid4()
 
 
-class FakeNamespace(object):
+class FakeNamespace:
     """Fake parser object."""
     def __init__(self, segment=None, name=None,
                  description=None,
                  recovery_method=None, service_type=None):
-        super(FakeNamespace, self).__init__()
+        super().__init__()
         self.segment = segment
         self.name = name
         self.description = description
@@ -48,12 +48,12 @@ class FakeNamespace(object):
         self.service_type = service_type
 
 
-class FakeSegments(object):
+class FakeSegments:
     """Fake segment list."""
     def __init__(self, name=None, uuid=None,
                  description=None,
                  recovery_method=None, service_type=None):
-        super(FakeSegments, self).__init__()
+        super().__init__()
         self.name = name
         self.uuid = uuid
         self.description = description
@@ -61,10 +61,10 @@ class FakeSegments(object):
         self.service_type = service_type
 
 
-class FakeSegment(object):
+class FakeSegment:
     """Fake segment show detail."""
     def __init__(self,):
-        super(FakeSegment, self).__init__()
+        super().__init__()
 
     def to_dict(self):
         return {
@@ -81,7 +81,7 @@ class FakeSegment(object):
 
 class BaseV1Segment(base.TestCase):
     def setUp(self):
-        super(BaseV1Segment, self).setUp()
+        super().setUp()
 
         self.app = mock.Mock()
         self.app_args = mock.Mock()
@@ -94,7 +94,7 @@ class BaseV1Segment(base.TestCase):
 
 class TestV1ShowSegment(BaseV1Segment):
     def setUp(self):
-        super(TestV1ShowSegment, self).setUp()
+        super().setUp()
 
         self.show_seg = ShowSegment(self.app,
                                     self.app_args,
@@ -134,7 +134,7 @@ class TestV1ShowSegment(BaseV1Segment):
 
 class TestV1UpdateSegment(BaseV1Segment, osc_lib_utils.TestCommand):
     def setUp(self):
-        super(TestV1UpdateSegment, self).setUp()
+        super().setUp()
 
         self.update_seg = UpdateSegment(self.app,
                                         self.app_args,
@@ -213,7 +213,7 @@ class TestV1UpdateSegment(BaseV1Segment, osc_lib_utils.TestCommand):
 
 class TestV1DeleteSegment(BaseV1Segment):
     def setUp(self):
-        super(TestV1DeleteSegment, self).setUp()
+        super().setUp()
 
         self.delete_seg = DeleteSegment(self.app,
                                         self.app_args,
@@ -257,7 +257,7 @@ class TestV1DeleteSegment(BaseV1Segment):
 class TestV1CreateSegment(BaseV1Segment, osc_lib_utils.TestCommand):
 
     def setUp(self):
-        super(TestV1CreateSegment, self).setUp()
+        super().setUp()
         self.cmd = CreateSegment(self.app, None)
 
     @ddt.data({"recovery_method": "auto"},

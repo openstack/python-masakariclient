@@ -33,12 +33,12 @@ SEGMENT_NAME = 'segment_name'
 SEGMENT_ID = uuid.uuid4()
 
 
-class FakeNamespace(object):
+class FakeNamespace:
     """Fake parser object."""
     def __init__(self, segment_id=None, host=None,
                  reserved=None, name=None, type=None,
                  control_attributes=None, on_maintenance=None):
-        super(FakeNamespace, self).__init__()
+        super().__init__()
         self.segment_id = segment_id
         self.host = host
         self.reserved = reserved
@@ -48,26 +48,26 @@ class FakeNamespace(object):
         self.on_maintenance = on_maintenance
 
 
-class FakeHosts(object):
+class FakeHosts:
     """Fake segment host list."""
     def __init__(self, name=None, uuid=None):
-        super(FakeHosts, self).__init__()
+        super().__init__()
         self.name = name
         self.uuid = uuid
 
 
-class FakeSegments(object):
+class FakeSegments:
     """Fake segment show detail."""
     def __init__(self, name=None, uuid=None):
-        super(FakeSegments, self).__init__()
+        super().__init__()
         self.name = name
         self.uuid = uuid
 
 
-class FakeHost(object):
+class FakeHost:
     """Fake segment show detail."""
     def __init__(self,):
-        super(FakeHost, self).__init__()
+        super().__init__()
 
     def to_dict(self):
         return {
@@ -86,7 +86,7 @@ class FakeHost(object):
 
 class BaseV1Host(base.TestCase):
     def setUp(self):
-        super(BaseV1Host, self).setUp()
+        super().setUp()
 
         self.app = mock.Mock()
         self.app_args = mock.Mock()
@@ -108,7 +108,7 @@ class BaseV1Host(base.TestCase):
 
 class TestV1ShowHost(BaseV1Host):
     def setUp(self):
-        super(TestV1ShowHost, self).setUp()
+        super().setUp()
         self.show_host = ShowHost(self.app, self.app_args,
                                   cmd_name='host show')
 
@@ -143,7 +143,7 @@ class TestV1ShowHost(BaseV1Host):
 
 class TestV1UpdateHost(BaseV1Host):
     def setUp(self):
-        super(TestV1UpdateHost, self).setUp()
+        super().setUp()
         self.update_host = UpdateHost(self.app, self.app_args,
                                       cmd_name='host update')
 
@@ -181,7 +181,7 @@ class TestV1UpdateHost(BaseV1Host):
 
 class TestV1DeleteHost(BaseV1Host):
     def setUp(self):
-        super(TestV1DeleteHost, self).setUp()
+        super().setUp()
         self.delete_host = DeleteHost(self.app, self.app_args,
                                       cmd_name='host delete')
 

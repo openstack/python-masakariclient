@@ -20,7 +20,7 @@ from masakariclient.common.i18n import _
 _type_error_msg = _("'%(other)s' should be an instance of '%(cls)s'")
 
 
-class APIVersion(object):
+class APIVersion:
     """This class represents an API Version Request.
 
     This class provides convenience methods for manipulation
@@ -146,5 +146,5 @@ class APIVersion(object):
             raise ValueError(
                 _("Null APIVersion cannot be converted to string."))
         elif self.is_latest():
-            return "%s.%s" % (self.ver_major, "latest")
-        return "%s.%s" % (self.ver_major, self.ver_minor)
+            return "{}.{}".format(self.ver_major, "latest")
+        return f"{self.ver_major}.{self.ver_minor}"

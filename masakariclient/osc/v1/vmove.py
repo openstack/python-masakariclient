@@ -30,7 +30,7 @@ class ListVMove(command.Lister):
     """List VMoves."""
 
     def get_parser(self, prog_name):
-        parser = super(ListVMove, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
         parser.add_argument(
             'notification_id',
             metavar='<notification_id>',
@@ -89,7 +89,7 @@ class ShowVMove(command.ShowOne):
     """Show vmove details."""
 
     def get_parser(self, prog_name):
-        parser = super(ShowVMove, self).get_parser(prog_name)
+        parser = super().get_parser(prog_name)
         parser.add_argument(
             'notification_id',
             metavar='<notification_id>',
